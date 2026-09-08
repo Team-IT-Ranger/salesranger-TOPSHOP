@@ -10,7 +10,7 @@
     {
       "name": "docs",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5501", "--directory", "docs"],
+      "runtimeArgs": ["docs/_serve_utf8.py", "5501"],
       "port": 5501
     }
   ]

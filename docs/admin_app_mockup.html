@@ -2,150 +2,218 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
+  /* ===== TOPSHOP theme — สีน้ำเงิน/เขียวพาสเทลเป็นหลัก ตัดด้วยแดง/ดำพาสเทล
+     โครงสร้าง sidebar (ชั้น group/subgroup/action, ยืดหด, ปักหมุด, แผงลอย)
+     คัดลอกพฤติกรรมมาจาก Hippo Village main.html/main_css.html ตรงๆ ตามที่ขอ
+     เป็นดีไซน์โลกเดียว (Hippo เองก็ไม่มีโหมดมืด) เลยไม่ทำ light/dark toggle ให้ ===== */
   :root{
-    --ground:#F6F3EC; --surface:#FFFFFF; --surface-2:#EFEAE0;
-    --ink:#1C1F1A; --ink-soft:#5B6259; --ink-faint:#8B9188; --border:#DFD9CB;
-    --accent:#1741C6; --accent-ink:#0E2C8F; --accent-soft:#E7ECFA;
-    --accent2:#0B7B52; --accent2-soft:#E4F3EC;
-    --amber:#9C6B12; --amber-soft:#F7EEDB;
-    --danger:#B3261E; --danger-soft:#FBE9E7;
-    --sb-w:250px; --topbar-h:56px;
-    --shadow: 0 1px 2px rgba(28,31,26,.05), 0 8px 22px -12px rgba(28,31,26,.16);
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --ground:#14171A; --surface:#1D2124; --surface-2:#242A2D;
-      --ink:#ECEAE3; --ink-soft:#A8AFA9; --ink-faint:#767D77; --border:#33393C;
-      --accent:#6F93F5; --accent-ink:#B7C7FA; --accent-soft:#212E4C;
-      --accent2:#3BC08F; --accent2-soft:#173327;
-      --amber:#E0AC4C; --amber-soft:#3A2F16;
-      --danger:#E5867E; --danger-soft:#3A211F;
-      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 22px -12px rgba(0,0,0,.55);
-    }
-  }
-  :root[data-theme="dark"]{
-    --ground:#14171A; --surface:#1D2124; --surface-2:#242A2D;
-    --ink:#ECEAE3; --ink-soft:#A8AFA9; --ink-faint:#767D77; --border:#33393C;
-    --accent:#6F93F5; --accent-ink:#B7C7FA; --accent-soft:#212E4C;
-    --accent2:#3BC08F; --accent2-soft:#173327;
-    --amber:#E0AC4C; --amber-soft:#3A2F16;
-    --danger:#E5867E; --danger-soft:#3A211F;
-    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 22px -12px rgba(0,0,0,.55);
+    --ground:#F2F7F5; --surface:#FFFFFF; --surface-2:#E8F1EE;
+    --ink:#161C1F; --ink-soft:#57696A; --ink-faint:#8FA09E; --border:#D7E4E1;
+
+    --blue:#3E6BB0; --blue-soft:#DCE9FB; --blue-pale:#EEF4FD;
+    --green:#3E8F68; --green-soft:#DCF1E6;
+    --red:#B5544C; --red-soft:#FBE2DF;
+    --grey-soft:#E8ECEA;
+
+    --sb-w:264px; --sb-cw:60px; --sb-dur:.5s; --sb-ease:cubic-bezier(.33,.02,.2,1);
+    --sg-open-dur:.42s; --sg-close-dur:.6s;
+    --fly-in-dur:.16s; --fly-out-dur:.12s;
+    --shadow: 0 1px 2px rgba(22,28,31,.05), 0 10px 26px -14px rgba(22,28,31,.16);
   }
 
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:'Sarabun',-apple-system,'Segoe UI',sans-serif;font-size:14px}
-  h1,h2,h3,button,.mono{font-family:'Kanit','Sarabun',sans-serif}
+  h1,h2,h3,.mono{font-family:'Kanit','Sarabun',sans-serif}
   .mono-data{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
-  button{cursor:pointer;font-size:13px}
+  button{cursor:pointer;font-size:13px;font-family:inherit}
 
-  /* ── shell ── */
-  .shell{display:flex;min-height:100vh}
-  aside.sidebar{width:var(--sb-w);flex:0 0 auto;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column}
-  .brand{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--border);height:var(--topbar-h)}
-  .brand .mark{width:26px;height:26px;border-radius:7px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
-  .brand b{font-size:14px;letter-spacing:.01em}
+  .app-shell{display:flex;min-height:100vh}
 
-  .scope-switch{margin:12px 14px;background:var(--surface-2);border-radius:8px;padding:3px;display:flex;gap:2px}
-  .scope-switch button{flex:1;border:none;background:none;padding:7px 4px;border-radius:6px;font-size:12px;font-weight:600;color:var(--ink-soft)}
-  .scope-switch button.active{background:var(--surface);color:var(--accent-ink);box-shadow:var(--shadow)}
+  /* ══════════════ SIDEBAR (โครงสร้าง/พฤติกรรมจาก Hippo Village) ══════════════ */
+  .sidebar{
+    width:var(--sb-w); flex-shrink:0;
+    background:linear-gradient(175deg,#1B2C33 0%,#16242A 55%,#121B20 100%);
+    color:#fff; position:fixed; top:0; bottom:0; left:0;
+    display:flex; flex-direction:column; z-index:30; overflow:hidden;
+    transition:width var(--sb-dur) var(--sb-ease);
+    box-shadow:2px 0 20px rgba(18,27,32,.25);
+  }
+  .main-area{ margin-left:var(--sb-w); flex:1; min-width:0; transition:margin-left var(--sb-dur) var(--sb-ease); }
+  body.sb-collapsed .sidebar{ width:var(--sb-cw); overflow:visible; }
+  body.sb-collapsed .main-area{ margin-left:var(--sb-cw); }
+  body.sb-collapsed .sb-nav{ overflow:hidden; }
+  body.sb-collapsed .sb-header{ overflow:hidden; }
 
-  nav.nav{flex:1;overflow-y:auto;padding:4px 10px 16px}
-  .nav-group{margin-top:14px}
-  .nav-group:first-child{margin-top:2px}
-  .nav-group-label{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);padding:0 8px 6px}
-  .nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:none;background:none;padding:8px 9px;border-radius:7px;color:var(--ink-soft);font-size:13px;margin-bottom:1px}
-  .nav-item:hover{background:var(--surface-2)}
-  .nav-item.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
-  .nav-item svg{width:16px;height:16px;flex-shrink:0}
-  .nav-item .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .soon-dot{width:6px;height:6px;border-radius:50%;background:var(--ink-faint);flex-shrink:0}
+  .sb-header{ display:flex; align-items:center; justify-content:space-between; padding:16px 14px 8px; flex-shrink:0; gap:8px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .sb-logo{ display:flex; align-items:center; gap:9px; overflow:hidden; }
+  .sb-logo-mark{ width:30px; height:30px; border-radius:8px; background:var(--blue-soft); color:#1B2C33; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; }
+  .sb-logo-txt{ font-size:15.5px; font-weight:700; white-space:nowrap; letter-spacing:.01em; color:rgba(255,255,255,.95); }
+  body.sb-collapsed .sb-logo-txt{ display:none; }
+  body.sb-collapsed .sb-header{ justify-content:center; padding:16px 0 8px; }
+  .sb-ctrl-btn{ width:26px; height:26px; border-radius:7px; border:none; background:rgba(255,255,255,.08); color:rgba(255,255,255,.6); display:flex; align-items:center; justify-content:center; font-size:14px; transition:background .15s,color .15s; flex-shrink:0; }
+  .sb-ctrl-btn:hover{ background:rgba(255,255,255,.16); color:#fff; }
+  .sb-ctrl-btn.is-pinned{ background:var(--blue-soft); color:#1B2C33; }
+  body.sb-collapsed .sb-ctrl-btn{ display:none; }
 
-  /* ── top bar ── */
-  .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
-  header.topbar{height:var(--topbar-h);border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0}
-  .crumb{font-size:13px;color:var(--ink-soft)}
-  .crumb b{color:var(--ink);font-weight:600}
-  .top-right{display:flex;align-items:center;gap:10px}
-  .tenant-pick{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:12.5px;color:var(--ink-soft);background:var(--surface-2)}
-  .avatar{width:28px;height:28px;border-radius:50%;background:var(--accent2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700}
+  .sb-company{ display:flex; align-items:center; gap:8px; padding:10px 14px 8px; border-bottom:1px solid rgba(255,255,255,.06); }
+  .sb-co-mark{ width:26px; height:26px; border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; background:linear-gradient(150deg,var(--green),#2E6B4E); }
+  .sb-co-name{ font-size:12.5px; font-weight:600; color:rgba(255,255,255,.8); line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  body.sb-collapsed .sb-co-name{ display:none; }
+  body.sb-collapsed .sb-company{ justify-content:center; padding:10px 0 8px; }
 
-  main.content{flex:1;overflow-y:auto;padding:24px 28px 60px}
-  .view{display:none;max-width:1080px}
-  .view.active{display:block}
-  .view-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;gap:16px}
-  .view-head h1{font-size:19px;margin:0 0 3px}
-  .view-head p{margin:0;color:var(--ink-soft);font-size:12.5px}
+  .sb-nav{ flex:1; overflow-y:auto; overflow-x:hidden; padding:8px 0 12px; }
+  .sb-nav::-webkit-scrollbar{ width:3px; }
+  .sb-nav::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); }
 
-  .btn{border:1px solid var(--border);background:var(--surface);padding:8px 14px;border-radius:7px;font-weight:600;font-size:12.5px;color:var(--ink)}
-  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
-  .btn-ghost{border-color:transparent;background:none;color:var(--ink-soft)}
+  .sb-item-standalone{
+    display:flex; align-items:center; gap:9px; width:calc(100% - 16px); margin:1px 8px;
+    padding:8px 10px; border:none; background:none; color:rgba(255,255,255,.68);
+    font-size:14px; font-weight:600; text-align:left; border-radius:8px;
+    transition:background .12s,color .12s; white-space:nowrap;
+  }
+  .sb-item-standalone:hover{ background:rgba(255,255,255,.08); color:#fff; }
+  .sb-item-standalone.active{ background:var(--blue-soft); color:#1B2C33; font-weight:700; }
+  .si{ font-size:16px; width:18px; text-align:center; flex-shrink:0; }
+  body.sb-collapsed .sb-item-standalone{ justify-content:center; padding:9px 0; margin:1px 0; width:100%; border-radius:0; }
+  body.sb-collapsed .si-lbl{ display:none; }
 
-  /* ── dashboard ── */
-  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-  .kpi .lbl{font-size:11.5px;color:var(--ink-soft);margin-bottom:6px}
-  .kpi .val{font-family:'IBM Plex Mono';font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
-  .kpi .sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
-  .two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:14px}
-  .panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
-  .panel h3{font-size:13.5px;margin:0 0 12px}
-  .activity-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-size:12.5px}
-  .activity-row:first-of-type{border-top:none}
-  .activity-row .who{color:var(--ink-soft)}
-  .activity-row .amt{font-family:'IBM Plex Mono';font-weight:600}
+  /* Level 1 — Group */
+  .sb-group{ margin-top:3px; }
+  .sb-group-hd{ display:flex; align-items:center; gap:8px; padding:6px 12px; cursor:pointer; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.5); transition:color .15s; user-select:none; white-space:nowrap; }
+  .sb-group-hd:hover{ color:rgba(255,255,255,.8); }
+  .sb-group-hd.is-open{ color:#fff; }
+  .sb-group-num{ font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--green); opacity:.9; flex-shrink:0; }
+  .sb-group-icon{ font-size:14px; flex-shrink:0; }
+  .sb-group-label{ flex:1; }
+  .sb-group-chev{ font-size:10px; opacity:.5; transition:transform var(--sg-open-dur) var(--sg-ease); margin-left:auto; }
+  body.sb-collapsed .sb-group-hd{ justify-content:center; padding:8px 0; }
+  body.sb-collapsed .sb-group-num,
+  body.sb-collapsed .sb-group-label,
+  body.sb-collapsed .sb-group-chev{ display:none; }
+  body.sb-collapsed .sb-group-body{ display:none; }
 
-  /* ── tables ── */
-  .table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:10px}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;background:var(--surface-2);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);padding:9px 12px;white-space:nowrap}
-  td{padding:9px 12px;border-top:1px solid var(--border);white-space:nowrap}
-  td.wrap{white-space:normal}
-  .pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
-  .pill.ok{background:var(--accent2-soft);color:var(--accent2)}
-  .pill.wait{background:var(--amber-soft);color:var(--amber)}
-  .pill.off{background:var(--surface-2);color:var(--ink-faint)}
+  .sb-group-body{ overflow:hidden; visibility:visible; transition:max-height var(--sg-open-dur) var(--sg-ease),visibility 0s; }
+  .sb-group-body.sg-closed{ max-height:0!important; visibility:hidden; transition:max-height var(--sg-close-dur) var(--sg-ease),visibility 0s var(--sg-close-dur); }
+  @media (prefers-reduced-motion:reduce){ .sb-group-body,.sb-group-body.sg-closed{ transition:none; } }
 
-  /* ── forms ── */
-  .form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:14px}
-  .form-card h3{font-size:13.5px;margin:0 0 3px}
-  .form-card .form-hint{font-size:11.5px;color:var(--ink-soft);margin:0 0 16px}
-  .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .form-grid.g2{grid-template-columns:repeat(2,1fr)}
-  .field{display:flex;flex-direction:column;gap:5px}
-  .field.span2{grid-column:span 2}
-  .field.span3{grid-column:span 3}
-  .field label{font-size:11.5px;color:var(--ink-soft);font-weight:600}
-  .field input,.field select{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--surface);color:var(--ink);font-family:inherit}
-  .field .unit{font-size:10.5px;color:var(--ink-faint)}
-  .form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
-  .toggle-row{display:flex;align-items:center;gap:8px;font-size:12.5px}
+  /* Level 2 — Subgroup (แถวในแถบซ้าย ชี้เมาส์/กด → เปิดแผงชั้น 3 ทางขวา) */
+  .sb-subgroup{ padding:1px 0; }
+  .sb-subgroup-hd{ display:flex; align-items:center; gap:8px; padding:6px 12px 6px 20px; cursor:pointer; color:rgba(255,255,255,.85); font-size:13px; font-weight:500; border-radius:7px; margin:1px 8px; transition:background .2s,color .2s; user-select:none; }
+  .sb-subgroup-hd:hover{ background:rgba(255,255,255,.07); }
+  .sb-subgroup-hd.is-open{ background:var(--blue-soft); color:#1B2C33; font-weight:700; }
+  .sb-subgroup-num{ font-family:'IBM Plex Mono'; font-size:10px; opacity:.65; flex-shrink:0; }
+  .sb-subgroup-hd.is-open .sb-subgroup-num{ opacity:.85; }
+  .sb-subgroup-lbl{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sb-subgroup-chev{ font-size:10px; opacity:.5; flex-shrink:0; transform:rotate(-90deg); }
+  .sb-subgroup-hd.is-open .sb-subgroup-chev{ opacity:.9; }
 
-  .fieldset{border:1px dashed var(--border);border-radius:8px;padding:12px 14px;margin-top:4px}
-  .fieldset legend{font-size:11px;font-weight:700;color:var(--accent-ink);padding:0 6px;letter-spacing:.02em}
+  /* Level 3 — Action ออกไปเป็นแผงลอยด้านขวา */
+  .sb-fly{
+    position:fixed; z-index:45; min-width:240px; max-width:320px; max-height:70vh; overflow-y:auto;
+    padding:8px 6px; background:linear-gradient(160deg,#22343B 0%,#182428 100%);
+    border:1px solid rgba(255,255,255,.1); border-radius:0 12px 12px 0;
+    box-shadow:12px 14px 34px rgba(10,16,19,.4);
+    opacity:1; transform:translateX(0); visibility:visible;
+    transition:opacity var(--fly-in-dur) ease,transform var(--fly-in-dur) var(--sg-ease),visibility 0s;
+  }
+  .sb-fly.sg-closed{ opacity:0; transform:translateX(-10px); visibility:hidden; pointer-events:none; transition:opacity var(--fly-out-dur) ease,transform var(--fly-out-dur) var(--sg-ease),visibility 0s var(--fly-out-dur); }
+  .sb-fly::before{ content:attr(data-title); display:block; padding:4px 12px 8px; font-size:11px; font-weight:700; letter-spacing:.03em; color:rgba(255,255,255,.5); border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:6px; }
+  body.sb-collapsed .sb-fly{ visibility:hidden; opacity:0; pointer-events:none; }
 
-  .soon-panel{background:var(--surface);border:1px dashed var(--border);border-radius:10px;padding:40px 24px;text-align:center;color:var(--ink-soft)}
-  .soon-panel .tag{display:inline-block;background:var(--amber-soft);color:var(--amber);font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:10px}
-  .soon-panel h2{font-size:15px;color:var(--ink);margin:0 0 6px}
-  .soon-panel p{font-size:12.5px;margin:0;max-width:44ch;margin:0 auto}
+  .sb-action{ display:flex; align-items:center; gap:8px; width:calc(100% - 12px); margin:1px 6px; padding:7px 10px; border:none; background:none; color:#fff; font-size:13px; text-align:left; border-radius:7px; position:relative; transition:background .1s,color .1s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sb-action-num{ font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--green); opacity:.85; flex-shrink:0; }
+  .sb-action:hover{ background:rgba(255,255,255,.09); }
+  .sb-action.active{ background:var(--blue-soft); color:#1B2C33; font-weight:700; }
+  .sb-action.active .sb-action-num{ color:var(--green); opacity:1; }
+  .soon-dot{ width:6px; height:6px; border-radius:50%; background:var(--red); margin-left:auto; flex-shrink:0; opacity:.8; }
 
-  ::-webkit-scrollbar{width:10px;height:10px}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
+  /* ══════════════ TOP BAR + CONTENT ══════════════ */
+  header.topbar{ height:56px; border-bottom:1px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:space-between; padding:0 22px; }
+  .crumb{ font-size:13px; color:var(--ink-soft); }
+  .crumb b{ color:var(--ink); font-weight:600; }
+  .top-right{ display:flex; align-items:center; gap:10px; }
+  .tenant-pick{ display:flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:7px; padding:5px 10px; font-size:12.5px; color:var(--ink-soft); background:var(--surface-2); }
+  .avatar{ width:28px; height:28px; border-radius:50%; background:var(--green); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:700; }
+
+  main.content{ padding:24px 28px 60px; max-width:1080px; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+  .view-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; gap:16px; }
+  .view-head h1{ font-size:19px; margin:0 0 3px; }
+  .view-head p{ margin:0; color:var(--ink-soft); font-size:12.5px; }
+
+  .btn{ border:1px solid var(--border); background:var(--surface); padding:8px 14px; border-radius:7px; font-weight:600; font-size:12.5px; color:var(--ink); }
+  .btn-primary{ background:var(--blue); border-color:var(--blue); color:#fff; }
+  .btn-ghost{ border-color:transparent; background:none; color:var(--ink-soft); }
+
+  .kpi-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+  .kpi{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; border-top:3px solid var(--blue); }
+  .kpi:nth-child(2){ border-top-color:var(--green); }
+  .kpi:nth-child(3){ border-top-color:var(--red); }
+  .kpi:nth-child(4){ border-top-color:var(--ink-faint); }
+  .kpi .lbl{ font-size:11.5px; color:var(--ink-soft); margin-bottom:6px; }
+  .kpi .val{ font-family:'IBM Plex Mono'; font-size:22px; font-weight:600; }
+  .kpi .sub{ font-size:11px; color:var(--ink-faint); margin-top:3px; }
+  .two-col{ display:grid; grid-template-columns:1.3fr 1fr; gap:14px; }
+  .panel{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; }
+  .panel h3{ font-size:13.5px; margin:0 0 12px; }
+  .activity-row{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-top:1px solid var(--border); font-size:12.5px; }
+  .activity-row:first-of-type{ border-top:none; }
+  .activity-row .who{ color:var(--ink-soft); }
+  .activity-row .amt{ font-family:'IBM Plex Mono'; font-weight:600; }
+
+  .table-wrap{ overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:10px; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th{ text-align:left; background:var(--surface-2); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); padding:9px 12px; white-space:nowrap; }
+  td{ padding:9px 12px; border-top:1px solid var(--border); white-space:nowrap; }
+  .pill{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; }
+  .pill.ok{ background:var(--green-soft); color:var(--green); }
+  .pill.wait{ background:var(--red-soft); color:var(--red); }
+  .pill.off{ background:var(--grey-soft); color:var(--ink-faint); }
+
+  .form-card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin-top:14px; }
+  .form-card h3{ font-size:13.5px; margin:0 0 3px; }
+  .form-card .form-hint{ font-size:11.5px; color:var(--ink-soft); margin:0 0 16px; }
+  .form-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .form-grid.g2{ grid-template-columns:repeat(2,1fr); }
+  .field{ display:flex; flex-direction:column; gap:5px; }
+  .field.span2{ grid-column:span 2; }
+  .field label{ font-size:11.5px; color:var(--ink-soft); font-weight:600; }
+  .field input,.field select{ padding:8px 10px; border:1px solid var(--border); border-radius:6px; font-size:13px; background:var(--surface); color:var(--ink); font-family:inherit; }
+  .field .unit{ font-size:10.5px; color:var(--ink-faint); }
+  .form-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border); }
+  .toggle-row{ display:flex; align-items:center; gap:8px; font-size:12.5px; }
+  .fieldset{ border:1px dashed var(--border); border-radius:8px; padding:12px 14px; margin-top:4px; }
+  .fieldset legend{ font-size:11px; font-weight:700; color:var(--blue); padding:0 6px; letter-spacing:.02em; }
+
+  .soon-panel{ background:var(--surface); border:1px dashed var(--border); border-radius:10px; padding:40px 24px; text-align:center; color:var(--ink-soft); }
+  .soon-panel .tag{ display:inline-block; background:var(--red-soft); color:var(--red); font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; margin-bottom:10px; }
+  .soon-panel h2{ font-size:15px; color:var(--ink); margin:0 0 6px; }
+  .soon-panel p{ font-size:12.5px; margin:0 auto; max-width:44ch; }
 </style>
 
-<div class="shell">
-  <aside class="sidebar">
-    <div class="brand"><span class="mark">TS</span><b>TOPSHOP Admin</b></div>
+<div class="app-shell">
 
-    <div class="scope-switch">
-      <button id="scope-tenant" class="active" onclick="setScope('tenant')">มุมมองตัวแทน</button>
-      <button id="scope-owner" onclick="setScope('owner')">มุมมองบริษัท</button>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo"><span class="sb-logo-mark">TS</span><span class="sb-logo-txt">TOPSHOP</span></div>
+      <button class="sb-ctrl-btn" id="pinBtn" title="ปักหมุดเมนูไว้" onclick="togglePin()">📌</button>
+    </div>
+    <div class="sb-company">
+      <span class="sb-co-mark" id="scopeMark">DA</span>
+      <span class="sb-co-name" id="scopeLabel">DEALER_A · มุมมองตัวแทน</span>
     </div>
 
-    <nav class="nav" id="nav"></nav>
+    <nav class="sb-nav" id="sb-nav">
+      <button class="sb-item-standalone active" data-view="dashboard" onclick="gotoView('dashboard')">
+        <span class="si">🏠</span><span class="si-lbl">ภาพรวม</span>
+      </button>
+      <div style="padding:8px 14px 4px"><button class="btn btn-ghost" style="width:100%;font-size:11px;padding:5px" onclick="toggleScope()" id="scopeSwitchBtn">↔ สลับเป็นมุมมองบริษัท</button></div>
+      <div id="nav-groups"></div>
+    </nav>
   </aside>
 
-  <div class="main-col">
+  <div class="main-area">
     <header class="topbar">
       <div class="crumb">TOPSHOP Admin / <b id="crumb-current">ภาพรวม</b></div>
       <div class="top-right">
@@ -226,9 +294,7 @@
             <div class="field"><label>ตัวคั่น</label><input value="-"></div>
             <div class="field"><label>รูปแบบวันที่</label><select><option>yyyyMMdd</option><option>yyMM</option><option>ไม่ใส่วันที่</option></select></div>
             <div class="field"><label>จำนวนหลักเลขรัน</label><input type="number" value="4"></div>
-            <div class="field span2"><label>รีเซ็ตตัวนับ</label>
-              <select><option>ทุกวัน</option><option>ทุกเดือน</option><option>ทุกปี</option><option>ไม่รีเซ็ต</option></select>
-            </div>
+            <div class="field span2"><label>รีเซ็ตตัวนับ</label><select><option>ทุกวัน</option><option>ทุกเดือน</option><option>ทุกปี</option><option>ไม่รีเซ็ต</option></select></div>
           </div>
           <div class="form-actions"><button class="btn">ยกเลิก</button><button class="btn btn-primary">บันทึก</button></div>
         </div>
@@ -270,15 +336,10 @@
             <tr><td>ลดพิเศษ Modern Trade</td><td>กลุ่มร้าน MT ซื้อครบ 20 ชิ้น</td><td>ลด ฿3/ชิ้น</td><td class="mono-data">หมดอายุ 31 ส.ค.</td><td><span class="pill off">ปิดใช้งาน</span></td></tr>
           </tbody>
         </table></div>
-
         <div class="form-card">
           <h3>สร้างโปรโมชั่นใหม่</h3>
           <p class="form-hint">ตั้งเงื่อนไขและผลลัพธ์ — ระบบตรวจซ้ำกับหน้างานเสมอ ลูกค้าแก้ราคาเองไม่ได้</p>
-
-          <div class="form-grid g2">
-            <div class="field span2"><label>ชื่อโปรโมชั่น</label><input placeholder="เช่น ลด 5% กลุ่มเครื่องดื่ม ก.ย."></div>
-          </div>
-
+          <div class="form-grid g2"><div class="field span2"><label>ชื่อโปรโมชั่น</label><input placeholder="เช่น ลด 5% กลุ่มเครื่องดื่ม ก.ย."></div></div>
           <fieldset class="fieldset" style="margin-top:14px">
             <legend>เงื่อนไข (ซื้ออะไร ครบเท่าไหร่)</legend>
             <div class="form-grid g2">
@@ -289,7 +350,6 @@
               <div class="field"><label>เฉพาะกลุ่มร้านค้า</label><select><option>ทุกกลุ่ม</option><option>Modern Trade</option><option>Traditional Trade</option><option>Wholesale</option></select></div>
             </div>
           </fieldset>
-
           <fieldset class="fieldset" style="margin-top:12px">
             <legend>ผลลัพธ์ (ลดยังไง / แถมอะไร)</legend>
             <div class="form-grid g2">
@@ -299,14 +359,12 @@
               <div class="field"><label>จำนวนของแถม</label><input placeholder="เฉพาะกรณี 'ของแถม'" disabled></div>
             </div>
           </fieldset>
-
           <div class="form-grid g2" style="margin-top:12px">
             <div class="field"><label>เริ่ม</label><input type="date" value="2026-09-01"></div>
             <div class="field"><label>สิ้นสุด</label><input type="date" value="2026-09-30"></div>
             <div class="field"><label>ลำดับความสำคัญ</label><input type="number" value="100"><span class="unit">เลขน้อยตรวจก่อน</span></div>
             <div class="field"><label style="visibility:hidden">.</label><label class="toggle-row"><input type="checkbox"> ใช้ร่วมกับโปรโมชั่นอื่นได้ (Stackable)</label></div>
           </div>
-
           <div class="form-actions"><button class="btn">ยกเลิก</button><button class="btn btn-primary">บันทึกโปรโมชั่น</button></div>
         </div>
       </section>
@@ -324,12 +382,12 @@
         </table></div>
       </section>
 
-      <!-- ═══ SOON PLACEHOLDER ═══ -->
+      <!-- ═══ SOON ═══ -->
       <section class="view" id="view-soon">
         <div class="soon-panel">
           <div class="tag">เร็วๆ นี้</div>
           <h2 id="soon-title">โมดูลนี้</h2>
-          <p id="soon-desc">ยังไม่เปิดใช้งาน — backend รองรับโครงสร้างสิทธิ์ไว้แล้ว รอต่อคิวพัฒนาหน้าจอ</p>
+          <p id="soon-desc">ยังไม่เปิดใช้งาน</p>
         </div>
       </section>
 
@@ -338,97 +396,224 @@
 </div>
 
 <script>
-const ICONS = {
-  home:'<path d="M3 10l7-6 7 6M5 9v7a1 1 0 0 0 1 1h3v-5h2v5h3a1 1 0 0 0 1-1V9" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
-  staff:'<circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M4 17c0-3 3-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
-  zone:'<path d="M10 2a6 6 0 0 1 6 6c0 4.5-6 10-6 10S4 12.5 4 8a6 6 0 0 1 6-6z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.6" fill="none"/>',
-  cust:'<path d="M4 8l1-4h10l1 4M4 8v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8M4 8h12" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
-  doc:'<path d="M6 2h6l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8 10h4M8 13h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-  recv:'<path d="M10 3v10m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 15v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
-  transfer:'<path d="M3 7h11m0 0l-3-3m3 3l-3 3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 13H6m0 0l3-3m-3 3l3 3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
-  van:'<rect x="2" y="8" width="10" height="6" rx="1" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 10h3l2 2v2h-5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="5.5" cy="15" r="1.4" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="14" cy="15" r="1.4" stroke="currentColor" stroke-width="1.4" fill="none"/>',
-  ship:'<path d="M3 6h11l3 4v6H3V6z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M3 10h14" stroke="currentColor" stroke-width="1.6"/>',
-  product:'<path d="M4 6l6-3 6 3-6 3-6-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M4 6v8l6 3 6-3V6M10 9v8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
-  promo:'<path d="M3 10l7-7 7 3-3 7-7 7-4-10z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="12" cy="8" r="1.3" fill="currentColor"/>',
-  tenant:'<path d="M4 17V6l6-3 6 3v11" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8 17v-4h4v4M8 9h.01M12 9h.01M8 12h.01M12 12h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-  roles:'<path d="M10 2l6 2.5v5c0 4-2.5 6.7-6 8.5-3.5-1.8-6-4.5-6-8.5v-5L10 2z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
-  report:'<path d="M4 16V9m5 7V4m5 12v-5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
-};
-function icon(name){ return '<svg viewBox="0 0 20 20">'+ICONS[name]+'</svg>'; }
-
+/* ══════════════ ข้อมูลเมนู — เลข group.subgroup.action เหมือนโครง Hippo Village ══════════════ */
 const NAV = {
-  tenant: [
-    { group:null, items:[ {id:'dashboard', label:'ภาพรวม', icon:'home', ready:true} ] },
-    { group:'ฝั่งตัวแทนจำหน่าย', items:[
-      {id:'staff', label:'พนักงานขาย', icon:'staff', ready:true},
-      {id:'zone-soon', label:'เขตการขาย', icon:'zone', ready:false, soon:'เขตการขาย', desc:'แบ่งเขต/เส้นทางให้พนักงานขับรถขาย ผูกกับลูกค้าแต่ละราย'},
-      {id:'customers', label:'ลูกค้า', icon:'cust', ready:true},
-      {id:'docnum', label:'เลขที่เอกสาร', icon:'doc', ready:true},
-      {id:'recv-soon', label:'รับสินค้าเข้าคลัง', icon:'recv', ready:false, soon:'รับสินค้าเข้าคลัง', desc:'ใบรับสินค้าเข้าคลังแบบมีเลขเอกสารทางการ ผูกกับใบสั่งซื้อ'},
-      {id:'transfer-soon', label:'โอนย้ายคลัง', icon:'transfer', ready:false, soon:'โอนย้ายคลัง', desc:'โอนสต็อกระหว่างคลังของตัวแทน พร้อมเลขเอกสารอ้างอิง'},
-      {id:'van-soon', label:'เบิกจ่ายให้ Cash Van', icon:'van', ready:false, soon:'เบิกจ่ายให้ Cash Van', desc:'ใบเบิกจากคลังขึ้นรถแบบมีเลขเอกสารทางการ (ปัจจุบันมีแบบง่ายใน mobile app แล้ว)'},
-      {id:'ship-soon', label:'การจัดส่ง', icon:'ship', ready:false, soon:'การจัดส่ง', desc:'ติดตาม SO ที่รอสำนักงานจัดส่งให้ลูกค้า'}
-    ]},
-    { group:'รายงาน', items:[ {id:'report-soon', label:'รายงานการขาย', icon:'report', ready:false, soon:'รายงานการขาย', desc:'สรุปยอดขายตามช่วงเวลา/พนักงาน/สินค้า ส่งออกเป็นไฟล์ได้'} ]}
-  ],
-  owner: [
-    { group:null, items:[ {id:'dashboard', label:'ภาพรวม', icon:'home', ready:true} ] },
-    { group:'ฝั่งบริษัทเจ้าของสินค้า', items:[
-      {id:'products', label:'สินค้าและราคา', icon:'product', ready:true},
-      {id:'promotions', label:'โปรโมชั่น', icon:'promo', ready:true},
-      {id:'tenants', label:'ตัวแทนจำหน่าย', icon:'tenant', ready:true},
-      {id:'roles-soon', label:'ผู้ใช้งานและสิทธิ์', icon:'roles', ready:false, soon:'ผู้ใช้งานและสิทธิ์', desc:'จัดการบัญชีแอดมิน กำหนดสิทธิ์ตาม role — ตอนนี้ทำผ่าน Apps Script Editor โดยตรง'}
-    ]},
-    { group:'รายงาน', items:[ {id:'report-soon2', label:'รายงานการขาย', icon:'report', ready:false, soon:'รายงานการขาย', desc:'สรุปยอดขายรวมทุกตัวแทน เทียบเป้า/โปรโมชั่น'} ]}
-  ]
+  tenant: {
+    scopeLabel:'DEALER_A · มุมมองตัวแทน', scopeMark:'DA',
+    groups:[
+      { n:'1', icon:'👥', label:'บุคลากรและเขตขาย', subs:[
+        { n:'1.1', label:'พนักงานขาย', items:[ {n:'1.1.1', label:'รายชื่อพนักงาน', view:'staff', ready:true} ] },
+        { n:'1.2', label:'เขตการขาย', items:[ {n:'1.2.1', label:'ผังเขตการขาย', view:'v-zone', ready:false, soon:'เขตการขาย', desc:'แบ่งเขต/เส้นทางให้พนักงานขับรถขาย ผูกกับลูกค้าแต่ละราย'} ] }
+      ]},
+      { n:'2', icon:'🏪', label:'ลูกค้าและเอกสาร', subs:[
+        { n:'2.1', label:'ลูกค้า', items:[
+          {n:'2.1.1', label:'รายชื่อลูกค้า', view:'customers', ready:true},
+          {n:'2.1.2', label:'นำเข้าจาก Express', view:'v-impcust', ready:false, soon:'นำเข้าลูกค้าจาก Express', desc:'อ่านไฟล์ M_customer จากโปรแกรม Express แล้วจับคู่/สร้างลูกค้าอัตโนมัติ'}
+        ]},
+        { n:'2.2', label:'เลขที่เอกสาร', items:[ {n:'2.2.1', label:'ตั้งค่ารูปแบบเลขที่', view:'docnum', ready:true} ] }
+      ]},
+      { n:'3', icon:'📦', label:'คลังสินค้า', subs:[
+        { n:'3.1', label:'เคลื่อนไหวสินค้า', items:[
+          {n:'3.1.1', label:'รับสินค้าเข้าคลัง', view:'v-recv', ready:false, soon:'รับสินค้าเข้าคลัง', desc:'ใบรับสินค้าเข้าคลังแบบมีเลขเอกสารทางการ ผูกกับใบสั่งซื้อ'},
+          {n:'3.1.2', label:'โอนย้ายคลัง', view:'v-transfer', ready:false, soon:'โอนย้ายคลัง', desc:'โอนสต็อกระหว่างคลังของตัวแทน พร้อมเลขเอกสารอ้างอิง'}
+        ]},
+        { n:'3.2', label:'เบิกจ่าย', items:[ {n:'3.2.1', label:'เบิกจ่ายให้ Cash Van', view:'v-van', ready:false, soon:'เบิกจ่ายให้ Cash Van (แบบทางการ)', desc:'ใบเบิกจากคลังขึ้นรถแบบมีเลขเอกสาร (ตอนนี้มีแบบง่ายใน mobile app แล้ว)'} ] }
+      ]},
+      { n:'4', icon:'🚚', label:'การจัดส่งและรายงาน', subs:[
+        { n:'4.1', label:'การจัดส่ง', items:[ {n:'4.1.1', label:'สถานะการจัดส่ง', view:'v-ship', ready:false, soon:'การจัดส่ง', desc:'ติดตาม SO ที่รอสำนักงานจัดส่งให้ลูกค้า'} ] },
+        { n:'4.2', label:'รายงาน', items:[ {n:'4.2.1', label:'รายงานการขาย', view:'v-report1', ready:false, soon:'รายงานการขาย', desc:'สรุปยอดขายตามช่วงเวลา/พนักงาน/สินค้า ส่งออกเป็นไฟล์ได้'} ] }
+      ]}
+    ]
+  },
+  owner: {
+    scopeLabel:'บริษัทเจ้าของสินค้า · มุมมองบริษัท', scopeMark:'TS',
+    groups:[
+      { n:'1', icon:'🏷️', label:'สินค้าและโปรโมชั่น', subs:[
+        { n:'1.1', label:'สินค้า', items:[
+          {n:'1.1.1', label:'รายการสินค้า', view:'products', ready:true},
+          {n:'1.1.2', label:'กลุ่มสินค้า', view:'v-pgroup', ready:false, soon:'กลุ่มสินค้า', desc:'จัดกลุ่มสินค้าไว้ใช้ผูกกับเงื่อนไขโปรโมชั่น'}
+        ]},
+        { n:'1.2', label:'โปรโมชั่น', items:[ {n:'1.2.1', label:'รายการโปรโมชั่น', view:'promotions', ready:true} ] }
+      ]},
+      { n:'2', icon:'🏢', label:'เครือข่ายตัวแทน', subs:[
+        { n:'2.1', label:'ตัวแทนจำหน่าย', items:[ {n:'2.1.1', label:'รายชื่อตัวแทน', view:'tenants', ready:true} ] },
+        { n:'2.2', label:'ผู้ใช้งานและสิทธิ์', items:[ {n:'2.2.1', label:'บัญชีแอดมิน', view:'v-roles', ready:false, soon:'ผู้ใช้งานและสิทธิ์', desc:'จัดการบัญชีแอดมิน กำหนดสิทธิ์ตาม role — ตอนนี้ทำผ่าน Apps Script Editor โดยตรง'} ] }
+      ]},
+      { n:'3', icon:'📈', label:'รายงาน', subs:[
+        { n:'3.1', label:'ยอดขาย', items:[ {n:'3.1.1', label:'สรุปยอดขายรวม', view:'v-report2', ready:false, soon:'รายงานการขาย', desc:'สรุปยอดขายรวมทุกตัวแทน เทียบเป้า/โปรโมชั่น'} ] }
+      ]}
+    ]
+  }
 };
 
 let scope = 'tenant';
-let current = 'dashboard';
+let sbPinned = false;
+let sbCollapsed = true;
+let closeTimer = null;
 
-function setScope(s){
-  scope = s;
-  document.getElementById('scope-tenant').classList.toggle('active', s==='tenant');
-  document.getElementById('scope-owner').classList.toggle('active', s==='owner');
-  document.getElementById('tenant-pick').style.display = s==='tenant' ? 'flex' : 'none';
+/* ── ยืดหด (hover-expand / pin) ── */
+function expandSidebar(){
+  if (closeTimer){ clearTimeout(closeTimer); closeTimer = null; }
+  if (sbPinned || !sbCollapsed) return;
+  sbCollapsed = false;
+  document.body.classList.remove('sb-collapsed');
+}
+function collapseSidebar(){
+  if (closeTimer) clearTimeout(closeTimer);
+  closeTimer = setTimeout(function(){
+    closeTimer = null;
+    closeAllFlies();
+    if (sbPinned) return;
+    sbCollapsed = true;
+    document.body.classList.add('sb-collapsed');
+  }, 260);
+}
+function togglePin(){
+  sbPinned = !sbPinned;
+  const btn = document.getElementById('pinBtn');
+  if (sbPinned){
+    sbCollapsed = false;
+    document.body.classList.remove('sb-collapsed');
+    btn.classList.add('is-pinned'); btn.textContent = '📌'; btn.title = 'คลายปักหมุด';
+  } else {
+    btn.classList.remove('is-pinned'); btn.textContent = '📍'; btn.title = 'ปักหมุดเมนูไว้';
+    collapseSidebar();
+  }
+}
+(function bindHover(){
+  const sb = document.getElementById('sidebar');
+  sb.addEventListener('mouseenter', expandSidebar);
+  sb.addEventListener('mouseleave', collapseSidebar);
+})();
+
+/* ── accordion ระดับ group (ชั้น 1 ยืดหดในที่) ── */
+function toggleGroup(id){
+  const body = document.getElementById(id);
+  if (!body) return;
+  const willOpen = body.classList.contains('sg-closed');
+  if (willOpen){
+    document.querySelectorAll('.sb-group-body').forEach(function(other){
+      if (other.id === id) return;
+      _setGroup(other, false);
+    });
+  }
+  _setGroup(body, willOpen);
+}
+function _setGroup(body, open){
+  body.classList.toggle('sg-closed', !open);
+  body.previousElementSibling.classList.toggle('is-open', open);
+  const chev = body.previousElementSibling.querySelector('.sb-group-chev');
+  if (chev) chev.style.transform = open ? 'rotate(0deg)' : 'rotate(-90deg)';
+  if (!open) closeFliesIn(body);
+  if (open){
+    body.style.maxHeight = '0px'; void body.offsetHeight;
+    body.style.maxHeight = body.scrollHeight + 'px';
+  } else {
+    body.style.maxHeight = '0px';
+  }
+}
+
+/* ── subgroup → แผงลอยชั้น 3 (คลิกหรือชี้เมาส์ค้างเปิด) ── */
+function toggleSubgroup(id, hd){
+  const fly = document.getElementById(id);
+  if (!fly) return;
+  const willOpen = fly.classList.contains('sg-closed');
+  closeOtherFlies(id);
+  fly.classList.toggle('sg-closed', !willOpen);
+  hd.classList.toggle('is-open', willOpen);
+  if (willOpen) placeFly(fly, hd);
+}
+function placeFly(fly, hd){
+  const r = hd.getBoundingClientRect();
+  const bar = document.getElementById('sidebar').getBoundingClientRect();
+  fly.style.left = Math.round(bar.right) + 'px';
+  let top = Math.round(r.top);
+  const room = window.innerHeight - (fly.offsetHeight || 200) - 12;
+  if (top > room) top = Math.max(12, room);
+  fly.style.top = top + 'px';
+}
+function closeOtherFlies(keepId){
+  document.querySelectorAll('.sb-fly').forEach(function(f){
+    if (f.id === keepId) return;
+    f.classList.add('sg-closed');
+    if (f.previousElementSibling) f.previousElementSibling.classList.remove('is-open');
+  });
+}
+function closeAllFlies(){ closeOtherFlies(null); }
+function closeFliesIn(groupBody){
+  groupBody.querySelectorAll('.sb-fly').forEach(function(f){
+    f.classList.add('sg-closed');
+    if (f.previousElementSibling) f.previousElementSibling.classList.remove('is-open');
+  });
+}
+
+/* ── render เมนูจาก NAV ตาม scope ปัจจุบัน ── */
+function renderNav(){
+  const data = NAV[scope];
+  document.getElementById('scopeLabel').textContent = data.scopeLabel;
+  document.getElementById('scopeMark').textContent = data.scopeMark;
+  document.getElementById('tenant-pick').style.display = scope === 'tenant' ? 'flex' : 'none';
+  document.getElementById('scopeSwitchBtn').textContent = scope === 'tenant' ? '↔ สลับเป็นมุมมองบริษัท' : '↔ สลับเป็นมุมมองตัวแทน';
+
+  const html = data.groups.map(function(g, gi){
+    const gid = 'g' + gi;
+    const subsHtml = g.subs.map(function(sg, si){
+      const flyId = gid + '-s' + si;
+      const itemsHtml = sg.items.map(function(it){
+        return '<button class="sb-action" onclick="gotoView(\''+it.view+'\')" data-view="'+it.view+'">' +
+          '<span class="sb-action-num">'+it.n+'</span><span>'+it.label+'</span>' +
+          (it.ready ? '' : '<span class="soon-dot"></span>') + '</button>';
+      }).join('');
+      return '<div class="sb-subgroup">' +
+        '<div class="sb-subgroup-hd" onmouseenter="toggleSubgroup(\''+flyId+'\', this)" onclick="toggleSubgroup(\''+flyId+'\', this)">' +
+          '<span class="sb-subgroup-num">'+sg.n+'</span><span class="sb-subgroup-lbl">'+sg.label+'</span><span class="sb-subgroup-chev">◂</span>' +
+        '</div>' +
+        '<div class="sb-fly sg-closed" id="'+flyId+'" data-title="'+sg.n+' '+sg.label+'">'+itemsHtml+'</div>' +
+      '</div>';
+    }).join('');
+    return '<div class="sb-group">' +
+      '<div class="sb-group-hd" onclick="toggleGroup(\''+gid+'\')">' +
+        '<span class="sb-group-num">'+g.n+'</span><span class="sb-group-icon">'+g.icon+'</span>' +
+        '<span class="sb-group-label">'+g.label+'</span><span class="sb-group-chev">▾</span>' +
+      '</div>' +
+      '<div class="sb-group-body sg-closed" id="'+gid+'">'+subsHtml+'</div>' +
+    '</div>';
+  }).join('');
+  document.getElementById('nav-groups').innerHTML = html;
+}
+
+function toggleScope(){
+  scope = scope === 'tenant' ? 'owner' : 'tenant';
   renderNav();
   gotoView('dashboard');
 }
 
-function renderNav(){
-  const nav = document.getElementById('nav');
-  nav.innerHTML = NAV[scope].map(g => (
-    '<div class="nav-group">' +
-    (g.group ? '<div class="nav-group-label">'+g.group+'</div>' : '') +
-    g.items.map(it => (
-      '<button class="nav-item" data-id="'+it.id+'" onclick="gotoView(\''+it.id+'\', '+JSON.stringify(it).replace(/"/g,'&quot;')+')">' +
-        icon(it.icon) + '<span class="lbl">'+it.label+'</span>' +
-        (it.ready ? '' : '<span class="soon-dot" title="เร็วๆ นี้"></span>') +
-      '</button>'
-    )).join('') +
-    '</div>'
-  )).join('');
+/* ── สลับหน้าเนื้อหา ── */
+const VIEW_MAP = {
+  staff:{el:'staff'}, customers:{el:'customers'}, docnum:{el:'docnum'},
+  products:{el:'products'}, promotions:{el:'promotions'}, tenants:{el:'tenants'},
+  dashboard:{el:'dashboard'}
+};
+function findMeta(view){
+  for (const g of NAV[scope].groups) for (const sg of g.subs) for (const it of sg.items) if (it.view === view) return it;
+  return null;
 }
-
-function gotoView(id, meta){
-  current = id;
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.id === id));
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-
-  let target = id, label = id;
-  const flat = NAV[scope].flatMap(g => g.items);
-  const found = flat.find(x => x.id === id) || meta;
-  if (found){
-    label = found.label;
-    if (!found.ready){
-      target = 'soon';
-      document.getElementById('soon-title').textContent = found.soon || found.label;
-      document.getElementById('soon-desc').textContent = found.desc || 'ยังไม่เปิดใช้งาน';
-    }
+function gotoView(view){
+  let elId = 'soon', label = view, meta = findMeta(view);
+  if (view === 'dashboard'){ elId = 'dashboard'; label = 'ภาพรวม'; }
+  else if (meta && meta.ready){ elId = view; label = meta.label; }
+  else if (meta){
+    elId = 'soon'; label = meta.label;
+    document.getElementById('soon-title').textContent = meta.soon;
+    document.getElementById('soon-desc').textContent = meta.desc;
   }
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  const target = document.getElementById('view-' + elId);
+  if (target) target.classList.add('active');
   document.getElementById('crumb-current').textContent = label;
-  const el = document.getElementById('view-' + target);
-  if (el) el.classList.add('active');
+
+  document.querySelectorAll('.sb-item-standalone').forEach(function(b){ b.classList.toggle('active', b.dataset.view === view); });
+  document.querySelectorAll('.sb-action').forEach(function(b){ b.classList.toggle('active', b.dataset.view === view); });
 }
 
 renderNav();
