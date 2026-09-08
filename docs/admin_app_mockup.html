@@ -1,0 +1,436 @@
+<title>TOPSHOP Admin Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root{
+    --ground:#F6F3EC; --surface:#FFFFFF; --surface-2:#EFEAE0;
+    --ink:#1C1F1A; --ink-soft:#5B6259; --ink-faint:#8B9188; --border:#DFD9CB;
+    --accent:#1741C6; --accent-ink:#0E2C8F; --accent-soft:#E7ECFA;
+    --accent2:#0B7B52; --accent2-soft:#E4F3EC;
+    --amber:#9C6B12; --amber-soft:#F7EEDB;
+    --danger:#B3261E; --danger-soft:#FBE9E7;
+    --sb-w:250px; --topbar-h:56px;
+    --shadow: 0 1px 2px rgba(28,31,26,.05), 0 8px 22px -12px rgba(28,31,26,.16);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#14171A; --surface:#1D2124; --surface-2:#242A2D;
+      --ink:#ECEAE3; --ink-soft:#A8AFA9; --ink-faint:#767D77; --border:#33393C;
+      --accent:#6F93F5; --accent-ink:#B7C7FA; --accent-soft:#212E4C;
+      --accent2:#3BC08F; --accent2-soft:#173327;
+      --amber:#E0AC4C; --amber-soft:#3A2F16;
+      --danger:#E5867E; --danger-soft:#3A211F;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 22px -12px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#14171A; --surface:#1D2124; --surface-2:#242A2D;
+    --ink:#ECEAE3; --ink-soft:#A8AFA9; --ink-faint:#767D77; --border:#33393C;
+    --accent:#6F93F5; --accent-ink:#B7C7FA; --accent-soft:#212E4C;
+    --accent2:#3BC08F; --accent2-soft:#173327;
+    --amber:#E0AC4C; --amber-soft:#3A2F16;
+    --danger:#E5867E; --danger-soft:#3A211F;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 22px -12px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:'Sarabun',-apple-system,'Segoe UI',sans-serif;font-size:14px}
+  h1,h2,h3,button,.mono{font-family:'Kanit','Sarabun',sans-serif}
+  .mono-data{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  button{cursor:pointer;font-size:13px}
+
+  /* ── shell ── */
+  .shell{display:flex;min-height:100vh}
+  aside.sidebar{width:var(--sb-w);flex:0 0 auto;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column}
+  .brand{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--border);height:var(--topbar-h)}
+  .brand .mark{width:26px;height:26px;border-radius:7px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .brand b{font-size:14px;letter-spacing:.01em}
+
+  .scope-switch{margin:12px 14px;background:var(--surface-2);border-radius:8px;padding:3px;display:flex;gap:2px}
+  .scope-switch button{flex:1;border:none;background:none;padding:7px 4px;border-radius:6px;font-size:12px;font-weight:600;color:var(--ink-soft)}
+  .scope-switch button.active{background:var(--surface);color:var(--accent-ink);box-shadow:var(--shadow)}
+
+  nav.nav{flex:1;overflow-y:auto;padding:4px 10px 16px}
+  .nav-group{margin-top:14px}
+  .nav-group:first-child{margin-top:2px}
+  .nav-group-label{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);padding:0 8px 6px}
+  .nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:none;background:none;padding:8px 9px;border-radius:7px;color:var(--ink-soft);font-size:13px;margin-bottom:1px}
+  .nav-item:hover{background:var(--surface-2)}
+  .nav-item.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+  .nav-item svg{width:16px;height:16px;flex-shrink:0}
+  .nav-item .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .soon-dot{width:6px;height:6px;border-radius:50%;background:var(--ink-faint);flex-shrink:0}
+
+  /* ── top bar ── */
+  .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+  header.topbar{height:var(--topbar-h);border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0}
+  .crumb{font-size:13px;color:var(--ink-soft)}
+  .crumb b{color:var(--ink);font-weight:600}
+  .top-right{display:flex;align-items:center;gap:10px}
+  .tenant-pick{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:12.5px;color:var(--ink-soft);background:var(--surface-2)}
+  .avatar{width:28px;height:28px;border-radius:50%;background:var(--accent2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700}
+
+  main.content{flex:1;overflow-y:auto;padding:24px 28px 60px}
+  .view{display:none;max-width:1080px}
+  .view.active{display:block}
+  .view-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;gap:16px}
+  .view-head h1{font-size:19px;margin:0 0 3px}
+  .view-head p{margin:0;color:var(--ink-soft);font-size:12.5px}
+
+  .btn{border:1px solid var(--border);background:var(--surface);padding:8px 14px;border-radius:7px;font-weight:600;font-size:12.5px;color:var(--ink)}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn-ghost{border-color:transparent;background:none;color:var(--ink-soft)}
+
+  /* ── dashboard ── */
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .kpi .lbl{font-size:11.5px;color:var(--ink-soft);margin-bottom:6px}
+  .kpi .val{font-family:'IBM Plex Mono';font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+  .kpi .sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
+  .two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:14px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+  .panel h3{font-size:13.5px;margin:0 0 12px}
+  .activity-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-size:12.5px}
+  .activity-row:first-of-type{border-top:none}
+  .activity-row .who{color:var(--ink-soft)}
+  .activity-row .amt{font-family:'IBM Plex Mono';font-weight:600}
+
+  /* ── tables ── */
+  .table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;background:var(--surface-2);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);padding:9px 12px;white-space:nowrap}
+  td{padding:9px 12px;border-top:1px solid var(--border);white-space:nowrap}
+  td.wrap{white-space:normal}
+  .pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .pill.ok{background:var(--accent2-soft);color:var(--accent2)}
+  .pill.wait{background:var(--amber-soft);color:var(--amber)}
+  .pill.off{background:var(--surface-2);color:var(--ink-faint)}
+
+  /* ── forms ── */
+  .form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:14px}
+  .form-card h3{font-size:13.5px;margin:0 0 3px}
+  .form-card .form-hint{font-size:11.5px;color:var(--ink-soft);margin:0 0 16px}
+  .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .form-grid.g2{grid-template-columns:repeat(2,1fr)}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field.span2{grid-column:span 2}
+  .field.span3{grid-column:span 3}
+  .field label{font-size:11.5px;color:var(--ink-soft);font-weight:600}
+  .field input,.field select{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--surface);color:var(--ink);font-family:inherit}
+  .field .unit{font-size:10.5px;color:var(--ink-faint)}
+  .form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+  .toggle-row{display:flex;align-items:center;gap:8px;font-size:12.5px}
+
+  .fieldset{border:1px dashed var(--border);border-radius:8px;padding:12px 14px;margin-top:4px}
+  .fieldset legend{font-size:11px;font-weight:700;color:var(--accent-ink);padding:0 6px;letter-spacing:.02em}
+
+  .soon-panel{background:var(--surface);border:1px dashed var(--border);border-radius:10px;padding:40px 24px;text-align:center;color:var(--ink-soft)}
+  .soon-panel .tag{display:inline-block;background:var(--amber-soft);color:var(--amber);font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+  .soon-panel h2{font-size:15px;color:var(--ink);margin:0 0 6px}
+  .soon-panel p{font-size:12.5px;margin:0;max-width:44ch;margin:0 auto}
+
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
+</style>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="mark">TS</span><b>TOPSHOP Admin</b></div>
+
+    <div class="scope-switch">
+      <button id="scope-tenant" class="active" onclick="setScope('tenant')">มุมมองตัวแทน</button>
+      <button id="scope-owner" onclick="setScope('owner')">มุมมองบริษัท</button>
+    </div>
+
+    <nav class="nav" id="nav"></nav>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <div class="crumb">TOPSHOP Admin / <b id="crumb-current">ภาพรวม</b></div>
+      <div class="top-right">
+        <div class="tenant-pick" id="tenant-pick">🏢 DEALER_A — บริษัท ตัวแทนภาคใต้</div>
+        <div class="avatar">พว</div>
+      </div>
+    </header>
+
+    <main class="content" id="content">
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <section class="view active" id="view-dashboard">
+        <div class="view-head"><div><h1>ภาพรวมวันนี้</h1><p>8 กันยายน 2569 · อัปเดตล่าสุด 09:41</p></div></div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="lbl">ยอดขายวันนี้</div><div class="val">฿84,210</div><div class="sub">42 บิล</div></div>
+          <div class="kpi"><div class="lbl">พนักงานขับรถวันนี้</div><div class="val">11<span style="font-size:13px;color:var(--ink-faint)">/13</span></div><div class="sub">2 คนยังไม่เช็คอิน</div></div>
+          <div class="kpi"><div class="lbl">รออนุมัติ</div><div class="val">3</div><div class="sub">พนักงานลงทะเบียนใหม่</div></div>
+          <div class="kpi"><div class="lbl">SO รอจัดส่ง</div><div class="val">7</div><div class="sub">มูลค่า ฿61,400</div></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <h3>รายการขายล่าสุด</h3>
+            <div class="activity-row"><span>SO-20260908-0042 · ร้านป้าแดง มินิมาร์ท</span><span class="amt mono-data">฿2,140</span></div>
+            <div class="activity-row"><span>SO-20260908-0041 · ร้านสะดวกซื้อบ้านใหม่</span><span class="amt mono-data">฿5,860</span></div>
+            <div class="activity-row"><span>SO-20260908-0040 · ร้านโชห่วยลุงสมชาย</span><span class="amt mono-data">฿980</span></div>
+            <div class="activity-row"><span>SO-20260908-0039 · หจก.รุ่งเรืองค้าส่ง</span><span class="amt mono-data">฿14,220</span></div>
+          </div>
+          <div class="panel">
+            <h3>สินค้าขายดีวันนี้</h3>
+            <div class="activity-row"><span>น้ำดื่มตราภูเขา 600ml (แพ็ค 12)</span><span class="amt mono-data">186 แพ็ค</span></div>
+            <div class="activity-row"><span>ขนมปังกรอบรสดั้งเดิม</span><span class="amt mono-data">94 ห่อ</span></div>
+            <div class="activity-row"><span>นมถั่วเหลืองกล่อง 250ml (ลัง 24)</span><span class="amt mono-data">31 ลัง</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ STAFF ═══ -->
+      <section class="view" id="view-staff">
+        <div class="view-head"><div><h1>พนักงานขาย</h1><p>อนุมัติ/ระงับผู้ใช้ LINE ที่ลงทะเบียนเข้ามา — เห็นเฉพาะพนักงานของตัวแทนนี้</p></div><button class="btn btn-primary">+ เพิ่มพนักงาน</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ชื่อ</th><th>บทบาท</th><th>เขตการขาย</th><th>สถานะ</th><th>เข้าใช้ล่าสุด</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>สมชาย ใจดี</td><td>Cash Van Sales</td><td>เขต 1 — เมือง</td><td><span class="pill ok">อนุมัติแล้ว</span></td><td class="mono-data">08:52 วันนี้</td><td><button class="btn btn-ghost">แก้ไข</button></td></tr>
+            <tr><td>วิภา สายบัว</td><td>Cash Van Sales</td><td>เขต 2 — ท่าศาลา</td><td><span class="pill ok">อนุมัติแล้ว</span></td><td class="mono-data">08:15 วันนี้</td><td><button class="btn btn-ghost">แก้ไข</button></td></tr>
+            <tr><td>ประยุทธ คำแหง</td><td>Cash Van Sales</td><td>เขต 3 — ฉวาง</td><td><span class="pill wait">รออนุมัติ</span></td><td class="mono-data">เมื่อวาน</td><td><button class="btn btn-primary" style="padding:5px 12px">อนุมัติ</button></td></tr>
+            <tr><td>กัญญา ทองดี</td><td>Cash Van Sales</td><td>เขต 1 — เมือง</td><td><span class="pill wait">รออนุมัติ</span></td><td class="mono-data">2 วันก่อน</td><td><button class="btn btn-primary" style="padding:5px 12px">อนุมัติ</button></td></tr>
+            <tr><td>อนุชา พรหมแก้ว</td><td>Cash Van Sales</td><td>เขต 4 — ทุ่งใหญ่</td><td><span class="pill off">ระงับ</span></td><td class="mono-data">12 วันก่อน</td><td><button class="btn btn-ghost">เปิดใช้งาน</button></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- ═══ CUSTOMERS ═══ -->
+      <section class="view" id="view-customers">
+        <div class="view-head"><div><h1>ลูกค้า</h1><p>ร้านค้าของตัวแทนนี้ — ผูกกลุ่มร้านค้าไว้ใช้กับเงื่อนไขโปรโมชั่น</p></div><button class="btn btn-primary">+ เพิ่มลูกค้า</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ชื่อร้าน</th><th>กลุ่ม</th><th>เขต</th><th>เบอร์โทร</th><th>สถานะ</th></tr></thead>
+          <tbody>
+            <tr><td>ร้านป้าแดง มินิมาร์ท</td><td>Traditional Trade</td><td>เขต 1</td><td class="mono-data">081-234-5678</td><td><span class="pill ok">ใช้งาน</span></td></tr>
+            <tr><td>ร้านสะดวกซื้อบ้านใหม่</td><td>Convenience</td><td>เขต 2</td><td class="mono-data">089-112-4433</td><td><span class="pill ok">ใช้งาน</span></td></tr>
+            <tr><td>หจก.รุ่งเรืองค้าส่ง</td><td>Wholesale</td><td>เขต 1</td><td class="mono-data">075-441-220</td><td><span class="pill ok">ใช้งาน</span></td></tr>
+            <tr><td>ร้านโชห่วยลุงสมชาย</td><td>Traditional Trade</td><td>เขต 3</td><td class="mono-data">086-778-9012</td><td><span class="pill off">ปิดกิจการ</span></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- ═══ DOCNUM ═══ -->
+      <section class="view" id="view-docnum">
+        <div class="view-head"><div><h1>เลขที่เอกสาร</h1><p>รูปแบบเลขที่ใบขาย/SO ของตัวแทนนี้ — ตั้งได้อิสระต่อตัวแทน</p></div></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ประเภทเอกสาร</th><th>ตัวอย่างเลขที่</th><th>รีเซ็ตรอบ</th><th>สถานะ</th><th></th></tr></thead>
+          <tbody><tr><td>SO — ใบขาย</td><td class="mono-data">SO-20260908-0043</td><td>รายวัน</td><td><span class="pill ok">ใช้งาน</span></td><td><button class="btn btn-ghost">แก้ไข</button></td></tr></tbody>
+        </table></div>
+        <div class="form-card">
+          <h3>แก้ไขรูปแบบ — SO</h3>
+          <p class="form-hint">เลขถัดไปจะเป็น <b class="mono-data">SO-20260909-0001</b> ตามรูปแบบนี้</p>
+          <div class="form-grid g2">
+            <div class="field"><label>คำนำหน้า (Prefix)</label><input value="SO"></div>
+            <div class="field"><label>ตัวคั่น</label><input value="-"></div>
+            <div class="field"><label>รูปแบบวันที่</label><select><option>yyyyMMdd</option><option>yyMM</option><option>ไม่ใส่วันที่</option></select></div>
+            <div class="field"><label>จำนวนหลักเลขรัน</label><input type="number" value="4"></div>
+            <div class="field span2"><label>รีเซ็ตตัวนับ</label>
+              <select><option>ทุกวัน</option><option>ทุกเดือน</option><option>ทุกปี</option><option>ไม่รีเซ็ต</option></select>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn">ยกเลิก</button><button class="btn btn-primary">บันทึก</button></div>
+        </div>
+      </section>
+
+      <!-- ═══ PRODUCTS ═══ -->
+      <section class="view" id="view-products">
+        <div class="view-head"><div><h1>สินค้าและราคา</h1><p>ควบคุมจากส่วนกลาง ใช้ร่วมกันทุกตัวแทนจำหน่าย</p></div><button class="btn btn-primary">+ เพิ่มสินค้า</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>สินค้า</th><th>กลุ่ม</th><th>หน่วยฐาน</th><th>ราคาฐาน</th><th>หน่วยอื่น</th><th>สถานะ</th></tr></thead>
+          <tbody>
+            <tr><td>น้ำดื่มตราภูเขา 600ml</td><td>เครื่องดื่ม</td><td>ชิ้น</td><td class="mono-data">฿7.00</td><td class="mono-data">แพ็ค×12 ฿78 · ลัง×24 ฿150</td><td><span class="pill ok">ใช้งาน</span></td></tr>
+            <tr><td>ขนมปังกรอบรสดั้งเดิม</td><td>ขนมขบเคี้ยว</td><td>ห่อ</td><td class="mono-data">฿12.00</td><td class="mono-data">—</td><td><span class="pill ok">ใช้งาน</span></td></tr>
+            <tr><td>นมถั่วเหลืองกล่อง 250ml</td><td>ผลิตภัณฑ์นม</td><td>กล่อง</td><td class="mono-data">฿9.50</td><td class="mono-data">ลัง×24 ฿216</td><td><span class="pill ok">ใช้งาน</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="form-card">
+          <h3>เพิ่มสินค้าใหม่</h3>
+          <p class="form-hint">หน่วยขายเพิ่มเติม (แพ็ค/ลัง) ตั้งได้หลังบันทึกสินค้าแล้ว</p>
+          <div class="form-grid">
+            <div class="field span2"><label>ชื่อสินค้า</label><input placeholder="เช่น น้ำดื่มตราภูเขา 600ml"></div>
+            <div class="field"><label>รหัสอ้างอิง (Express)</label><input placeholder="เช่น 625650"></div>
+            <div class="field"><label>ราคาฐาน</label><input type="number" placeholder="0.00"></div>
+            <div class="field"><label>หน่วยฐาน</label><input placeholder="ชิ้น"></div>
+            <div class="field"><label>กลุ่มสินค้า</label><select><option>เครื่องดื่ม</option><option>ขนมขบเคี้ยว</option><option>ของใช้ในบ้าน</option><option>อาหารสำเร็จรูป</option><option>ผลิตภัณฑ์นม</option></select></div>
+          </div>
+          <div class="form-actions"><button class="btn">ยกเลิก</button><button class="btn btn-primary">บันทึกสินค้า</button></div>
+        </div>
+      </section>
+
+      <!-- ═══ PROMOTIONS ═══ -->
+      <section class="view" id="view-promotions">
+        <div class="view-head"><div><h1>โปรโมชั่น</h1><p>ควบคุมจากส่วนกลาง ใช้ได้กับทุกตัวแทน — เครื่องยนต์คำนวณซ้ำเสมอตอนบันทึกขายจริง</p></div><button class="btn btn-primary">+ สร้างโปรโมชั่น</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ชื่อโปรโมชั่น</th><th>เงื่อนไข</th><th>ส่วนลด/ของแถม</th><th>ช่วงเวลา</th><th>สถานะ</th></tr></thead>
+          <tbody>
+            <tr><td>ลด 5% กลุ่มเครื่องดื่ม</td><td>ซื้อครบ ฿2,000</td><td>ลด 5%</td><td class="mono-data">1–30 ก.ย.</td><td><span class="pill ok">ใช้งาน</span></td></tr>
+            <tr><td>ซื้อ 10 แถม 1 น้ำดื่ม</td><td>น้ำดื่มตราภูเขา ครบ 10 ลัง</td><td>แถม 1 ลัง</td><td class="mono-data">ไม่มีกำหนด</td><td><span class="pill ok">ใช้งาน</span></td></tr>
+            <tr><td>ลดพิเศษ Modern Trade</td><td>กลุ่มร้าน MT ซื้อครบ 20 ชิ้น</td><td>ลด ฿3/ชิ้น</td><td class="mono-data">หมดอายุ 31 ส.ค.</td><td><span class="pill off">ปิดใช้งาน</span></td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="form-card">
+          <h3>สร้างโปรโมชั่นใหม่</h3>
+          <p class="form-hint">ตั้งเงื่อนไขและผลลัพธ์ — ระบบตรวจซ้ำกับหน้างานเสมอ ลูกค้าแก้ราคาเองไม่ได้</p>
+
+          <div class="form-grid g2">
+            <div class="field span2"><label>ชื่อโปรโมชั่น</label><input placeholder="เช่น ลด 5% กลุ่มเครื่องดื่ม ก.ย."></div>
+          </div>
+
+          <fieldset class="fieldset" style="margin-top:14px">
+            <legend>เงื่อนไข (ซื้ออะไร ครบเท่าไหร่)</legend>
+            <div class="form-grid g2">
+              <div class="field"><label>ผูกกับ</label><select><option>กลุ่มสินค้า</option><option>สินค้ารายตัว</option><option>คละหลายกลุ่ม</option></select></div>
+              <div class="field"><label>กลุ่ม/สินค้าเป้าหมาย</label><select><option>เครื่องดื่ม</option><option>ขนมขบเคี้ยว</option><option>ของใช้ในบ้าน</option></select></div>
+              <div class="field"><label>จำนวนขั้นต่ำ (หน่วยฐาน)</label><input type="number" placeholder="ไม่บังคับ"></div>
+              <div class="field"><label>ยอดซื้อขั้นต่ำ</label><input type="number" placeholder="2000"></div>
+              <div class="field"><label>เฉพาะกลุ่มร้านค้า</label><select><option>ทุกกลุ่ม</option><option>Modern Trade</option><option>Traditional Trade</option><option>Wholesale</option></select></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="fieldset" style="margin-top:12px">
+            <legend>ผลลัพธ์ (ลดยังไง / แถมอะไร)</legend>
+            <div class="form-grid g2">
+              <div class="field"><label>ประเภท</label><select><option>ลดเป็น %</option><option>ลดเหมาบิล (บาท)</option><option>ลดต่อหน่วย (บาท)</option><option>ของแถม</option></select></div>
+              <div class="field"><label>มูลค่า</label><input type="number" placeholder="5"></div>
+              <div class="field"><label>สินค้าของแถม</label><input placeholder="เฉพาะกรณี 'ของแถม'" disabled></div>
+              <div class="field"><label>จำนวนของแถม</label><input placeholder="เฉพาะกรณี 'ของแถม'" disabled></div>
+            </div>
+          </fieldset>
+
+          <div class="form-grid g2" style="margin-top:12px">
+            <div class="field"><label>เริ่ม</label><input type="date" value="2026-09-01"></div>
+            <div class="field"><label>สิ้นสุด</label><input type="date" value="2026-09-30"></div>
+            <div class="field"><label>ลำดับความสำคัญ</label><input type="number" value="100"><span class="unit">เลขน้อยตรวจก่อน</span></div>
+            <div class="field"><label style="visibility:hidden">.</label><label class="toggle-row"><input type="checkbox"> ใช้ร่วมกับโปรโมชั่นอื่นได้ (Stackable)</label></div>
+          </div>
+
+          <div class="form-actions"><button class="btn">ยกเลิก</button><button class="btn btn-primary">บันทึกโปรโมชั่น</button></div>
+        </div>
+      </section>
+
+      <!-- ═══ TENANTS ═══ -->
+      <section class="view" id="view-tenants">
+        <div class="view-head"><div><h1>ตัวแทนจำหน่าย</h1><p>สร้าง Tenant Sheet ใหม่ให้ตัวแทนแต่ละราย — ฝั่งบริษัทเจ้าของสินค้าเท่านั้น</p></div><button class="btn btn-primary">+ สร้างตัวแทนใหม่</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>รหัส</th><th>ชื่อ</th><th>ภาค</th><th>ยอดขายเดือนนี้</th><th>สถานะ</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="mono-data">DEALER_A</td><td>บริษัท ตัวแทนภาคใต้</td><td>ใต้</td><td class="mono-data">฿1,842,000</td><td><span class="pill ok">ใช้งาน (นำร่อง)</span></td><td><button class="btn btn-ghost">เปิด Sheet ↗</button></td></tr>
+            <tr><td class="mono-data">DEALER_B</td><td>บริษัท ตัวแทนภาคเหนือ</td><td>เหนือ</td><td class="mono-data">—</td><td><span class="pill wait">รอเริ่มนำร่อง</span></td><td><button class="btn btn-ghost">เปิด Sheet ↗</button></td></tr>
+            <tr><td class="mono-data">—</td><td colspan="4" style="color:var(--ink-faint)">อีก 13 ตัวแทน — รอ Phase ขยายผลหลังพิสูจน์กับ 2 รายนำร่อง</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- ═══ SOON PLACEHOLDER ═══ -->
+      <section class="view" id="view-soon">
+        <div class="soon-panel">
+          <div class="tag">เร็วๆ นี้</div>
+          <h2 id="soon-title">โมดูลนี้</h2>
+          <p id="soon-desc">ยังไม่เปิดใช้งาน — backend รองรับโครงสร้างสิทธิ์ไว้แล้ว รอต่อคิวพัฒนาหน้าจอ</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+const ICONS = {
+  home:'<path d="M3 10l7-6 7 6M5 9v7a1 1 0 0 0 1 1h3v-5h2v5h3a1 1 0 0 0 1-1V9" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  staff:'<circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M4 17c0-3 3-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+  zone:'<path d="M10 2a6 6 0 0 1 6 6c0 4.5-6 10-6 10S4 12.5 4 8a6 6 0 0 1 6-6z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.6" fill="none"/>',
+  cust:'<path d="M4 8l1-4h10l1 4M4 8v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8M4 8h12" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
+  doc:'<path d="M6 2h6l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8 10h4M8 13h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  recv:'<path d="M10 3v10m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 15v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+  transfer:'<path d="M3 7h11m0 0l-3-3m3 3l-3 3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 13H6m0 0l3-3m-3 3l3 3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  van:'<rect x="2" y="8" width="10" height="6" rx="1" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 10h3l2 2v2h-5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="5.5" cy="15" r="1.4" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="14" cy="15" r="1.4" stroke="currentColor" stroke-width="1.4" fill="none"/>',
+  ship:'<path d="M3 6h11l3 4v6H3V6z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M3 10h14" stroke="currentColor" stroke-width="1.6"/>',
+  product:'<path d="M4 6l6-3 6 3-6 3-6-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M4 6v8l6 3 6-3V6M10 9v8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
+  promo:'<path d="M3 10l7-7 7 3-3 7-7 7-4-10z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="12" cy="8" r="1.3" fill="currentColor"/>',
+  tenant:'<path d="M4 17V6l6-3 6 3v11" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8 17v-4h4v4M8 9h.01M12 9h.01M8 12h.01M12 12h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  roles:'<path d="M10 2l6 2.5v5c0 4-2.5 6.7-6 8.5-3.5-1.8-6-4.5-6-8.5v-5L10 2z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
+  report:'<path d="M4 16V9m5 7V4m5 12v-5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+};
+function icon(name){ return '<svg viewBox="0 0 20 20">'+ICONS[name]+'</svg>'; }
+
+const NAV = {
+  tenant: [
+    { group:null, items:[ {id:'dashboard', label:'ภาพรวม', icon:'home', ready:true} ] },
+    { group:'ฝั่งตัวแทนจำหน่าย', items:[
+      {id:'staff', label:'พนักงานขาย', icon:'staff', ready:true},
+      {id:'zone-soon', label:'เขตการขาย', icon:'zone', ready:false, soon:'เขตการขาย', desc:'แบ่งเขต/เส้นทางให้พนักงานขับรถขาย ผูกกับลูกค้าแต่ละราย'},
+      {id:'customers', label:'ลูกค้า', icon:'cust', ready:true},
+      {id:'docnum', label:'เลขที่เอกสาร', icon:'doc', ready:true},
+      {id:'recv-soon', label:'รับสินค้าเข้าคลัง', icon:'recv', ready:false, soon:'รับสินค้าเข้าคลัง', desc:'ใบรับสินค้าเข้าคลังแบบมีเลขเอกสารทางการ ผูกกับใบสั่งซื้อ'},
+      {id:'transfer-soon', label:'โอนย้ายคลัง', icon:'transfer', ready:false, soon:'โอนย้ายคลัง', desc:'โอนสต็อกระหว่างคลังของตัวแทน พร้อมเลขเอกสารอ้างอิง'},
+      {id:'van-soon', label:'เบิกจ่ายให้ Cash Van', icon:'van', ready:false, soon:'เบิกจ่ายให้ Cash Van', desc:'ใบเบิกจากคลังขึ้นรถแบบมีเลขเอกสารทางการ (ปัจจุบันมีแบบง่ายใน mobile app แล้ว)'},
+      {id:'ship-soon', label:'การจัดส่ง', icon:'ship', ready:false, soon:'การจัดส่ง', desc:'ติดตาม SO ที่รอสำนักงานจัดส่งให้ลูกค้า'}
+    ]},
+    { group:'รายงาน', items:[ {id:'report-soon', label:'รายงานการขาย', icon:'report', ready:false, soon:'รายงานการขาย', desc:'สรุปยอดขายตามช่วงเวลา/พนักงาน/สินค้า ส่งออกเป็นไฟล์ได้'} ]}
+  ],
+  owner: [
+    { group:null, items:[ {id:'dashboard', label:'ภาพรวม', icon:'home', ready:true} ] },
+    { group:'ฝั่งบริษัทเจ้าของสินค้า', items:[
+      {id:'products', label:'สินค้าและราคา', icon:'product', ready:true},
+      {id:'promotions', label:'โปรโมชั่น', icon:'promo', ready:true},
+      {id:'tenants', label:'ตัวแทนจำหน่าย', icon:'tenant', ready:true},
+      {id:'roles-soon', label:'ผู้ใช้งานและสิทธิ์', icon:'roles', ready:false, soon:'ผู้ใช้งานและสิทธิ์', desc:'จัดการบัญชีแอดมิน กำหนดสิทธิ์ตาม role — ตอนนี้ทำผ่าน Apps Script Editor โดยตรง'}
+    ]},
+    { group:'รายงาน', items:[ {id:'report-soon2', label:'รายงานการขาย', icon:'report', ready:false, soon:'รายงานการขาย', desc:'สรุปยอดขายรวมทุกตัวแทน เทียบเป้า/โปรโมชั่น'} ]}
+  ]
+};
+
+let scope = 'tenant';
+let current = 'dashboard';
+
+function setScope(s){
+  scope = s;
+  document.getElementById('scope-tenant').classList.toggle('active', s==='tenant');
+  document.getElementById('scope-owner').classList.toggle('active', s==='owner');
+  document.getElementById('tenant-pick').style.display = s==='tenant' ? 'flex' : 'none';
+  renderNav();
+  gotoView('dashboard');
+}
+
+function renderNav(){
+  const nav = document.getElementById('nav');
+  nav.innerHTML = NAV[scope].map(g => (
+    '<div class="nav-group">' +
+    (g.group ? '<div class="nav-group-label">'+g.group+'</div>' : '') +
+    g.items.map(it => (
+      '<button class="nav-item" data-id="'+it.id+'" onclick="gotoView(\''+it.id+'\', '+JSON.stringify(it).replace(/"/g,'&quot;')+')">' +
+        icon(it.icon) + '<span class="lbl">'+it.label+'</span>' +
+        (it.ready ? '' : '<span class="soon-dot" title="เร็วๆ นี้"></span>') +
+      '</button>'
+    )).join('') +
+    '</div>'
+  )).join('');
+}
+
+function gotoView(id, meta){
+  current = id;
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+
+  let target = id, label = id;
+  const flat = NAV[scope].flatMap(g => g.items);
+  const found = flat.find(x => x.id === id) || meta;
+  if (found){
+    label = found.label;
+    if (!found.ready){
+      target = 'soon';
+      document.getElementById('soon-title').textContent = found.soon || found.label;
+      document.getElementById('soon-desc').textContent = found.desc || 'ยังไม่เปิดใช้งาน';
+    }
+  }
+  document.getElementById('crumb-current').textContent = label;
+  const el = document.getElementById('view-' + target);
+  if (el) el.classList.add('active');
+}
+
+renderNav();
+gotoView('dashboard');
+</script>
