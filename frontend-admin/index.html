@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesRanger TOPSHOP — Admin (ทดสอบ)</title>
+<style>
+  :root{
+    --ink:#1c1f1a; --ink-soft:#5b6259; --ground:#f4f2ee; --surface:#fff;
+    --border:#dcd6c8; --accent:#1741c6; --accent-soft:#e7ecfa;
+    --danger:#c0392b; --danger-soft:#fdecea; --ok:#0b7b52; --ok-soft:#e4f3ec;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,'Segoe UI',sans-serif;background:var(--ground);color:var(--ink)}
+  .banner{background:#3a2f16;color:#f7eedb;font-size:12.5px;padding:8px 16px;text-align:center}
+
+  /* ── login ── */
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .login-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;width:320px}
+  .login-card h1{font-size:18px;margin:0 0 4px}
+  .login-card p{color:var(--ink-soft);font-size:13px;margin:0 0 20px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:4px}
+  .field input,.field select{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;font-size:14px}
+  button{cursor:pointer;font-size:13.5px;font-weight:600;border-radius:7px;border:1px solid transparent;padding:9px 16px}
+  .btn-primary{background:var(--accent);color:#fff;width:100%}
+  .btn-primary:disabled{opacity:.5;cursor:default}
+  .btn-sm{padding:5px 10px;font-size:12.5px}
+  .err{background:var(--danger-soft);color:var(--danger);font-size:12.5px;padding:8px 10px;border-radius:6px;margin-bottom:12px;display:none}
+
+  /* ── app shell ── */
+  #app-screen{display:none;min-height:100vh}
+  header.top{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px}
+  header.top .who{font-size:13px;color:var(--ink-soft)}
+  header.top .who b{color:var(--ink)}
+  .layout{display:flex}
+  nav.side{width:190px;border-right:1px solid var(--border);padding:14px 10px;min-height:calc(100vh - 49px)}
+  nav.side button{display:block;width:100%;text-align:left;background:none;border:none;padding:9px 12px;border-radius:7px;font-size:13.5px;color:var(--ink-soft);margin-bottom:2px}
+  nav.side button.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  main.content{flex:1;padding:24px 28px;max-width:920px}
+  .view{display:none}
+  .view.active{display:block}
+  .view h2{font-size:17px;margin:0 0 4px}
+  .view .hint{color:var(--ink-soft);font-size:12.5px;margin:0 0 18px}
+
+  table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;font-size:13.5px}
+  th{text-align:left;background:#efeae0;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);padding:8px 10px}
+  td{padding:8px 10px;border-top:1px solid var(--border)}
+  .empty{color:var(--ink-soft);font-size:13px;padding:14px;text-align:center}
+
+  .add-form{display:flex;gap:8px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:16px}
+  .add-form input,.add-form select{padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px}
+  .add-form button{background:var(--ok);color:#fff}
+
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .tag.yes{background:var(--ok-soft);color:var(--ok)}
+  .tag.no{background:var(--danger-soft);color:var(--danger)}
+
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;display:none;z-index:50}
+</style>
+</head>
+<body>
+
+  <div class="banner">⚠ หน้าทดสอบชั่วคราว — ยังไม่ใช่ Admin App ตัวเต็ม (ครอบคลุมแค่ ตัวแทน / สินค้า / พนักงาน เพื่อพิสูจน์ว่า backend ทำงานถูกต้อง)</div>
+
+  <!-- ══════════ LOGIN ══════════ -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h1>SalesRanger TOPSHOP</h1>
+      <p>เข้าสู่ระบบแอดมิน (ทดสอบ)</p>
+      <div class="err" id="login-err"></div>
+      <div class="field">
+        <label>Backend URL</label>
+        <input id="backend-url" placeholder="https://script.google.com/macros/s/XXXX/exec">
+      </div>
+      <div class="field">
+        <label>Username</label>
+        <input id="login-user" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="login-pass" type="password" autocomplete="current-password">
+      </div>
+      <button class="btn-primary" id="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+
+  <!-- ══════════ APP ══════════ -->
+  <div id="app-screen">
+    <header class="top">
+      <b>SalesRanger TOPSHOP · Admin (ทดสอบ)</b>
+      <div class="who">
+        <span id="who-name"></span> · <b id="who-role"></b>
+        <span id="who-tenant"></span>
+        &nbsp;·&nbsp;<button class="btn-sm" onclick="doLogout()">ออกจากระบบ</button>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="side" id="side-nav">
+        <button data-view="tenants" onclick="gotoView('tenants')">ตัวแทนจำหน่าย</button>
+        <button data-view="products" onclick="gotoView('products')">สินค้า</button>
+        <button data-view="staff" onclick="gotoView('staff')">พนักงานขาย</button>
+      </nav>
+      <main class="content">
+
+        <section class="view" id="view-tenants">
+          <h2>ตัวแทนจำหน่าย</h2>
+          <p class="hint">ฝั่งบริษัทเจ้าของสินค้าเท่านั้น — สร้าง Tenant Sheet ใหม่ให้ตัวแทนแต่ละราย</p>
+          <table><thead><tr><th>รหัส</th><th>ชื่อ</th><th>ภาค</th><th>สถานะ</th><th>Sheet</th></tr></thead>
+            <tbody id="tenants-body"><tr><td class="empty" colspan="5">กำลังโหลด...</td></tr></tbody></table>
+          <div class="add-form">
+            <input id="t-id" placeholder="รหัสตัวแทน เช่น DEALER_A">
+            <input id="t-name" placeholder="ชื่อตัวแทน">
+            <input id="t-region" placeholder="ภาค">
+            <button onclick="createTenantUI()">+ สร้างตัวแทนใหม่</button>
+          </div>
+        </section>
+
+        <section class="view" id="view-products">
+          <h2>สินค้า</h2>
+          <p class="hint">ฝั่งบริษัทเจ้าของสินค้าเท่านั้น — ราคา/หน่วยฐาน ใช้ร่วมกันทุกตัวแทน</p>
+          <table><thead><tr><th>ชื่อ</th><th>ราคา</th><th>หน่วย</th><th>กลุ่ม</th><th>สถานะ</th></tr></thead>
+            <tbody id="products-body"><tr><td class="empty" colspan="5">กำลังโหลด...</td></tr></tbody></table>
+          <div class="add-form">
+            <input id="p-name" placeholder="ชื่อสินค้า">
+            <input id="p-price" type="number" placeholder="ราคา" style="width:90px">
+            <input id="p-unit" placeholder="หน่วย เช่น ชิ้น" style="width:100px">
+            <input id="p-group" type="number" placeholder="รหัสกลุ่ม" style="width:100px">
+            <button onclick="addProductUI()">+ เพิ่มสินค้า</button>
+          </div>
+        </section>
+
+        <section class="view" id="view-staff">
+          <h2>พนักงานขาย</h2>
+          <p class="hint">อนุมัติ/ระงับผู้ใช้ LINE ที่ลงทะเบียนเข้ามา — ฝั่งตัวแทนเห็นเฉพาะพนักงานของตัวเอง</p>
+          <table><thead><tr><th>ชื่อ</th><th>ตัวแทน</th><th>บทบาท</th><th>สถานะ</th><th>เข้าใช้ล่าสุด</th><th></th></tr></thead>
+            <tbody id="staff-body"><tr><td class="empty" colspan="6">กำลังโหลด...</td></tr></tbody></table>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+let TOKEN = localStorage.getItem('topshop_admin_token') || '';
+let SESSION = JSON.parse(localStorage.getItem('topshop_admin_session') || 'null');
+let BACKEND_URL = localStorage.getItem('topshop_backend_url') || '';
+let currentView = 'tenants';
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ทุก call ผ่าน doPost เดียว — text/plain กัน CORS preflight ตามสัญญาที่ backend กำหนด
+async function callApi(action, payload){
+  if (!BACKEND_URL) { toast('ยังไม่ได้ตั้งค่า Backend URL'); throw new Error('no backend url'); }
+  const res = await fetch(BACKEND_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action, token: TOKEN, payload: payload || {} })
+  });
+  const data = await res.json();
+  if (data.authError) { doLogout(); toast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่'); throw new Error('auth'); }
+  return data;
+}
+
+async function doLogin(){
+  const url = document.getElementById('backend-url').value.trim();
+  const username = document.getElementById('login-user').value.trim();
+  const password = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  if (!url || !username || !password) { errEl.textContent = 'กรุณากรอกให้ครบ'; errEl.style.display = 'block'; return; }
+
+  BACKEND_URL = url;
+  localStorage.setItem('topshop_backend_url', url);
+
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'กำลังเข้าสู่ระบบ...';
+  // Apps Script ผ่าน redirect echo มีดีเลย์ธรรมชาติ ~5-10 วิ — โชว์ข้อความกันเข้าใจผิดว่าค้าง
+  const slowHint = setTimeout(() => { btn.textContent = 'กำลังเข้าสู่ระบบ... (Apps Script อาจใช้เวลาถึง 10 วิ)'; }, 3000);
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'adminLogin', payload: { username, password } })
+    });
+    const data = await res.json();
+    if (!data.success) { errEl.textContent = data.message || 'เข้าสู่ระบบไม่สำเร็จ'; errEl.style.display = 'block'; return; }
+
+    TOKEN = data.token;
+    SESSION = { displayName: data.displayName, roleCode: data.roleCode, tenantId: data.tenantId };
+    localStorage.setItem('topshop_admin_token', TOKEN);
+    localStorage.setItem('topshop_admin_session', JSON.stringify(SESSION));
+    enterApp();
+  } catch (e) {
+    errEl.textContent = 'เรียก backend ไม่ได้: ' + e.message + ' (เช็คว่า deploy เวอร์ชันใหม่แล้ว และ URL ถูกต้อง)';
+    errEl.style.display = 'block';
+  } finally {
+    clearTimeout(slowHint);
+    btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ';
+  }
+}
+
+function doLogout(){
+  TOKEN = ''; SESSION = null;
+  localStorage.removeItem('topshop_admin_token');
+  localStorage.removeItem('topshop_admin_session');
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+function enterApp(){
+  document.getElementById('backend-url').value = BACKEND_URL;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  document.getElementById('who-name').textContent = SESSION.displayName;
+  document.getElementById('who-role').textContent = SESSION.roleCode;
+  document.getElementById('who-tenant').textContent = SESSION.tenantId ? ('· ' + SESSION.tenantId) : '';
+  // ฝั่งตัวแทน (มี tenantId) ไม่ควรเห็นเมนูตัวแทน/สินค้า (สิทธิ์บริษัทเท่านั้น) — ซ่อนไว้ฝั่ง UI เฉยๆ
+  // backend เป็นคนบังคับจริงผ่าน _requirePermission เสมอ ไม่ได้พึ่ง UI ซ่อนอย่างเดียว
+  document.querySelector('[data-view="tenants"]').style.display = SESSION.tenantId ? 'none' : 'block';
+  document.querySelector('[data-view="products"]').style.display = SESSION.tenantId ? 'none' : 'block';
+  gotoView(SESSION.tenantId ? 'staff' : 'tenants');
+}
+
+function gotoView(name){
+  currentView = name;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.querySelectorAll('nav.side button').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+  if (name === 'tenants') loadTenants();
+  if (name === 'products') loadProducts();
+  if (name === 'staff') loadStaff();
+}
+
+// ── Tenants ──
+async function loadTenants(){
+  const body = document.getElementById('tenants-body');
+  body.innerHTML = '<tr><td class="empty" colspan="5">กำลังโหลด...</td></tr>';
+  const res = await callApi('listTenants', {});
+  if (!res.success) { body.innerHTML = '<tr><td class="empty" colspan="5">' + res.message + '</td></tr>'; return; }
+  if (!res.data.length) { body.innerHTML = '<tr><td class="empty" colspan="5">ยังไม่มีตัวแทน</td></tr>'; return; }
+  body.innerHTML = res.data.map(t =>
+    '<tr><td>' + t.tenantId + '</td><td>' + t.name + '</td><td>' + (t.region || '-') + '</td>' +
+    '<td><span class="tag ' + (String(t.isActive) === 'TRUE' ? 'yes' : 'no') + '">' + (String(t.isActive) === 'TRUE' ? 'ใช้งาน' : 'ปิด') + '</span></td>' +
+    '<td><a href="' + t.sheetUrl + '" target="_blank">เปิด Sheet</a></td></tr>'
+  ).join('');
+}
+
+async function createTenantUI(){
+  const tenantId = document.getElementById('t-id').value.trim();
+  const name = document.getElementById('t-name').value.trim();
+  const region = document.getElementById('t-region').value.trim();
+  if (!tenantId || !name) { toast('กรุณากรอกรหัสและชื่อตัวแทน'); return; }
+  toast('กำลังสร้าง Tenant Sheet... (อาจใช้เวลาสักครู่)');
+  const res = await callApi('createTenant', { tenantId, name, region });
+  if (!res.success) { toast(res.message); return; }
+  toast('สร้างตัวแทน ' + tenantId + ' สำเร็จ');
+  document.getElementById('t-id').value = ''; document.getElementById('t-name').value = ''; document.getElementById('t-region').value = '';
+  loadTenants();
+}
+
+// ── Products ──
+async function loadProducts(){
+  const body = document.getElementById('products-body');
+  body.innerHTML = '<tr><td class="empty" colspan="5">กำลังโหลด...</td></tr>';
+  const res = await callApi('listProductsAdmin', {});
+  if (!res.success) { body.innerHTML = '<tr><td class="empty" colspan="5">' + res.message + '</td></tr>'; return; }
+  if (!res.data.length) { body.innerHTML = '<tr><td class="empty" colspan="5">ยังไม่มีสินค้า</td></tr>'; return; }
+  body.innerHTML = res.data.map(p =>
+    '<tr><td>' + p.name + '</td><td>' + p.base_price + '</td><td>' + p.unit + '</td><td>' + (p.group_id || '-') + '</td>' +
+    '<td><span class="tag ' + (String(p.is_active) === 'TRUE' ? 'yes' : 'no') + '">' + (String(p.is_active) === 'TRUE' ? 'ใช้งาน' : 'ปิด') + '</span></td></tr>'
+  ).join('');
+}
+
+async function addProductUI(){
+  const name = document.getElementById('p-name').value.trim();
+  const basePrice = parseFloat(document.getElementById('p-price').value) || 0;
+  const unit = document.getElementById('p-unit').value.trim() || 'ชิ้น';
+  const groupId = parseInt(document.getElementById('p-group').value) || 0;
+  if (!name) { toast('กรุณากรอกชื่อสินค้า'); return; }
+  const res = await callApi('addProduct', { name, basePrice, unit, groupId });
+  if (!res.success) { toast(res.message); return; }
+  toast('เพิ่มสินค้าสำเร็จ');
+  document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; document.getElementById('p-group').value = '';
+  loadProducts();
+}
+
+// ── Staff ──
+async function loadStaff(){
+  const body = document.getElementById('staff-body');
+  body.innerHTML = '<tr><td class="empty" colspan="6">กำลังโหลด...</td></tr>';
+  const res = await callApi('listStaffAdmin', {});
+  if (!res.success) { body.innerHTML = '<tr><td class="empty" colspan="6">' + res.message + '</td></tr>'; return; }
+  if (!res.data.length) { body.innerHTML = '<tr><td class="empty" colspan="6">ยังไม่มีพนักงาน</td></tr>'; return; }
+  body.innerHTML = res.data.map(u =>
+    '<tr><td>' + u.displayName + '</td><td>' + u.tenantId + '</td><td>' + u.role + '</td>' +
+    '<td><span class="tag ' + (u.status === 'Yes' ? 'yes' : 'no') + '">' + (u.status === 'Yes' ? 'อนุมัติแล้ว' : 'รออนุมัติ') + '</span></td>' +
+    '<td>' + (u.lastLogin || '-') + '</td>' +
+    '<td><button class="btn-sm" onclick="toggleStaffStatus(\'' + u.lineUserId + '\',\'' + u.status + '\')">' +
+      (u.status === 'Yes' ? 'ระงับ' : 'อนุมัติ') + '</button></td></tr>'
+  ).join('');
+}
+
+async function toggleStaffStatus(lineUserId, currentStatus){
+  const res = await callApi('updateStaffAdmin', { lineUserId, status: currentStatus === 'Yes' ? 'No' : 'Yes' });
+  if (!res.success) { toast(res.message); return; }
+  toast('อัปเดตสถานะสำเร็จ');
+  loadStaff();
+}
+
+// ── init ──
+window.onload = function(){
+  if (BACKEND_URL) document.getElementById('backend-url').value = BACKEND_URL;
+  if (TOKEN && SESSION) enterApp();
+};
+</script>
+</body>
+</html>
