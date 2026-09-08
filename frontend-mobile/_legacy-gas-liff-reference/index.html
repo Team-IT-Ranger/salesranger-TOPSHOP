@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SalesRanger Portal</title>
+  <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>  
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <!-- สถานะกำลังบันทึกข้อมูล -->
+    <div id="loading" class="hidden text-center">
+      <p class="text-slate-500 text-lg animate-pulse">กำลังบันทึกข้อมูลลงทะเบียน...</p>
+    </div>
+
+    <!-- 1. หน้าจอทักทายเมื่อมีชื่อในระบบแล้ว -->
+    <div id="welcomeScreen" class="hidden text-center space-y-4">
+      <h2 class="text-2xl font-bold text-indigo-600">SalesRanger Portal</h2>
+      <p class="text-slate-700 text-lg">สวัสดีคุณ: <span id="userName" class="font-semibold"></span></p>
+      
+      <div class="bg-slate-50 p-4 rounded-lg border text-left text-sm space-y-2">
+        <p><strong>บริษัทตัวแทน (Schema):</strong> <span id="userSchema"></span></p>
+        <p><strong>ระดับผู้ใช้งาน (Role):</strong> <span id="userRole" class="capitalize"></span></p>
+        <p><strong>สิทธิ์เข้าใช้งาน (Status):</strong> <span id="userStatus" class="font-bold"></span></p>
+      </div>
+      
+      <p id="statusNotice" class="text-xs italic"></p>
+    </div>
+
+    <!-- 2. หน้าจอลงทะเบียนกรณีเป็นผู้ใช้ใหม่ -->
+    <div id="registerScreen" class="hidden space-y-4">
+      <h2 class="text-xl font-bold text-slate-800 text-center">ลงทะเบียนเข้าใช้งาน</h2>
+      <p class="text-sm text-slate-500 text-center">ยินดีต้อนรับคุณ <span class="font-semibold text-indigo-600"><?= displayName ?></span> กรุณาเลือกบริษัทตัวแทนจำหน่ายของคุณ</p>
+      
+      <form id="regForm" onsubmit="submitRegistration(event)" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700">ชื่อ-นามสกุล (แสดงบนระบบ)</label>
+          <input type="text" id="regName" value="<?= displayName ?>" required class="mt-1 block w-full rounded border-slate-300 shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">บริษัทตัวแทนจำหน่าย (Schema)</label>
+          <select id="regSchema" required class="mt-1 block w-full rounded border-slate-300 shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="">-- เลือกบริษัทตัวแทนจำหน่าย --</option>
+            <? for (var ti = 0; ti < tenantOptions.length; ti++) { ?>
+            <option value="<?= tenantOptions[ti].tenant_id ?>"><?= tenantOptions[ti].name ?></option>
+            <? } ?>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 text-white p-2.5 rounded-lg font-semibold hover:bg-indigo-700 transition shadow">
+          ส่งข้อมูลลงทะเบียน (Register)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ดึงข้อมูลที่หลังบ้าน (GAS) แอบหย่อนไว้ให้ในรูปแบบของสคริปต์
+    const lineUid = "<?= lineUid ?>";
+    const userStatus = JSON.parse('<?= JSON.stringify(userStatus) ?>');
+
+    window.onload = function() {
+      if (userStatus.exists) {
+        // หากมีชื่อในระบบแล้ว
+        document.getElementById('userName').innerText = userStatus.name;
+        document.getElementById('userSchema').innerText = userStatus.schema;
+        document.getElementById('userRole').innerText = userStatus.role;
+        
+        const statusEl = document.getElementById('userStatus');
+        const noticeEl = document.getElementById('statusNotice');
+        
+        if(userStatus.status === 'Yes') {
+          statusEl.innerText = 'อนุมัติแล้ว (Yes)';
+          statusEl.className = 'font-bold text-green-600';
+          noticeEl.innerText = '✓ คุณสามารถเข้าใช้งานระบบขายสินค้าได้แล้ว';
+          noticeEl.className = 'text-xs text-green-600 italic';
+        } else {
+          statusEl.innerText = 'ระงับ/รออนุมัติ (No)';
+          statusEl.className = 'font-bold text-red-500';
+          noticeEl.innerText = '*โปรดรอแอดมินตรวจสอบและเปลี่ยนสถานะเป็น Yes ก่อนเข้าใช้งาน';
+          noticeEl.className = 'text-xs text-red-500 italic';
+        }
+        document.getElementById('welcomeScreen').classList.remove('hidden');
+      } else {
+        // หากเป็นพนักงานใหม่
+        document.getElementById('registerScreen').classList.remove('hidden');
+      }
+    };
+
+    function submitRegistration(e) {
+      e.preventDefault();
+      document.getElementById('registerScreen').classList.add('hidden');
+      document.getElementById('loading').classList.remove('hidden');
+
+      const userData = {
+        lineUid: lineUid,
+        name: document.getElementById('regName').value,
+        schema: document.getElementById('regSchema').value
+      };
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if(response.success) {
+            alert('ส่งข้อมูลลงทะเบียนสำเร็จเรียบร้อยแล้ว!');
+            document.getElementById('loading').classList.add('hidden');
+            
+            // เปลี่ยนหน้าจอเป็นสถานะรออนุมัติทันทีโดยไม่ต้องรีโหลดหน้าเว็บ
+            document.getElementById('userName').innerText = userData.name;
+            document.getElementById('userSchema').innerText = userData.schema;
+            document.getElementById('userRole').innerText = 'salesperson';
+            
+            const statusEl = document.getElementById('userStatus');
+            statusEl.innerText = 'ระงับ/รออนุมัติ (No)';
+            statusEl.className = 'font-bold text-red-500';
+            
+            const noticeEl = document.getElementById('statusNotice');
+            noticeEl.innerText = '*โปรดรอแอดมินตรวจสอบและเปลี่ยนสถานะเป็น Yes ก่อนเข้าใช้งาน';
+            noticeEl.className = 'text-xs text-red-500 italic';
+            
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+          }
+        })
+        .registerUser(userData);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# มี LINE_CHANNEL_SECRET จริงอยู่ในไฟล์นี้ — ห้าม commit ขึ้น GitHub เด็ดขาด
+# ยังคง clasp push ขึ้น Apps Script ได้ตามปกติ (คนละช่องทางกับ git)
+backend/script_properties.gs
+
+node_modules/
+.DS_Store

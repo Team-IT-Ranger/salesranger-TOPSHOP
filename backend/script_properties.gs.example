@@ -1,0 +1,14 @@
+/**
+ * คัดลอกไฟล์นี้เป็น script_properties.gs (ไม่ commit ขึ้น git — มี .gitignore กันไว้แล้ว)
+ * แล้วใส่ค่าจริงแทน placeholder ก่อนรัน set_ScriptProperties() ครั้งเดียวจาก Apps Script Editor
+ */
+function set_ScriptProperties() {
+  PropertiesService.getScriptProperties().setProperties({
+    CENTRAL_SHEET_FILEID : 'YOUR_CENTRAL_SHEET_FILE_ID',
+    LIFF_ID               : 'YOUR_LIFF_ID',
+    LINE_CHANNEL_ID       : 'YOUR_LINE_CHANNEL_ID',
+    LINE_CHANNEL_SECRET   : 'YOUR_LINE_CHANNEL_SECRET',
+    ENDPOINT_URL          : 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'
+  });
+  Logger.log('✅ ตั้งค่า Script Properties สำเร็จ');
+}

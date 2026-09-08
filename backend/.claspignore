@@ -1,0 +1,6 @@
+**/**
+!*.gs
+*.example.gs
+*.gs.example
+!*.html
+!appsscript.json

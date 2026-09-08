@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>TOPSHOP</title>
+<?!= HtmlService.createHtmlOutputFromFile('main_css').getContent(); ?>
+</head>
+<body>
+
+<!-- ══ HOME PAGE ══ -->
+<div id="page-home">
+  <!-- Hero Header -->
+  <div class="hero-hdr">
+    <div class="hero-top">
+      <div class="hero-avatar-wrap">
+        <div class="hero-avatar-txt" id="hdr-initial">S</div>
+      </div>
+      <div class="hero-logout" onclick="confirmLogout()">&#9211;</div>
+    </div>
+    <div class="hero-greeting">
+      <div class="hero-hi">สวัสดี!</div>
+      <div class="hero-name" id="hdr-name">Sales Ranger</div>
+    </div>
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <span class="hero-stat-icon">&#128203;</span>
+        <span class="hero-stat-lbl">Schema: <b id="hdr-schema">-</b></span>
+      </div>
+      <div class="hero-stat-right">
+        <span class="hero-stat-num" id="sum-bills">-</span>
+        <span class="hero-stat-unit">บิลวันนี้</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary strip -->
+  <div class="sum-strip">
+    <div class="sum-col">
+      <div class="sum-val" id="sum-rev">-</div>
+      <div class="sum-lbl">ยอดขาย (฿)</div>
+    </div>
+    <div class="sum-divider"></div>
+    <div class="sum-col">
+      <div class="sum-val" id="sum-visits">-</div>
+      <div class="sum-lbl">เยี่ยมร้านวันนี้</div>
+    </div>
+    <div class="sum-divider"></div>
+    <div class="sum-col">
+      <div class="sum-val" id="sum-role">-</div>
+      <div class="sum-lbl">สิทธิ์ผู้ใช้</div>
+    </div>
+  </div>
+
+  <!-- Menu grid 3 cols -->
+  <div class="menu-section-title">เมนูหลัก</div>
+  <div class="menu-grid3">
+
+    <button class="menu3-card" onclick="gotoPage('sell')">
+      <div class="menu3-icon-wrap" style="background:#E8F8F1">
+        <span class="menu3-icon" style="color:#0B7B52">&#128722;</span>
+      </div>
+      <div class="menu3-lbl">ขายหน้างาน</div>
+    </button>
+
+    <button class="menu3-card" onclick="gotoPage('stock')">
+      <div class="menu3-icon-wrap" style="background:#EEF2FF">
+        <span class="menu3-icon" style="color:#1741C6">&#128230;</span>
+      </div>
+      <div class="menu3-lbl">จัดการสต็อก</div>
+    </button>
+
+    <button class="menu3-card" onclick="gotoPage('visit')">
+      <div class="menu3-icon-wrap" style="background:#F0FDFA">
+        <span class="menu3-icon" style="color:#0E7490">&#128205;</span>
+      </div>
+      <div class="menu3-lbl">เยี่ยมร้านค้า</div>
+    </button>
+
+    <button class="menu3-card" onclick="gotoPage('cust')">
+      <div class="menu3-icon-wrap" style="background:#FAF5FF">
+        <span class="menu3-icon" style="color:#6D28D9">&#128101;</span>
+      </div>
+      <div class="menu3-lbl">ลูกค้า</div>
+    </button>
+
+    <button class="menu3-card" onclick="gotoPage('report')">
+      <div class="menu3-icon-wrap" style="background:#FFF7ED">
+        <span class="menu3-icon" style="color:#C2410C">&#128202;</span>
+      </div>
+      <div class="menu3-lbl">รายงาน</div>
+    </button>
+
+    <button class="menu3-card" onclick="gotoPage('history')">
+      <div class="menu3-icon-wrap" style="background:#F0F9FF">
+        <span class="menu3-icon" style="color:#0369A1">&#128196;</span>
+      </div>
+      <div class="menu3-lbl">ประวัติบิล</div>
+    </button>
+
+  </div>
+
+  <!-- Top products today -->
+  <div class="home-section">
+    <div class="home-section-hd">&#128293; ขายดีวันนี้</div>
+    <div id="home-top" class="home-section-body">
+      <div class="empty-txt">ยังไม่มีข้อมูล</div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bot-nav">
+    <button class="bot-btn bot-active" onclick="gotoPage('home')">
+      <span class="bot-icon">&#127968;</span>
+      <span class="bot-lbl">หน้าหลัก</span>
+    </button>
+    <button class="bot-btn" onclick="gotoPage('sell')">
+      <span class="bot-icon">&#128722;</span>
+      <span class="bot-lbl">ขาย</span>
+    </button>
+    <button class="bot-btn" onclick="gotoPage('visit')">
+      <span class="bot-icon">&#128205;</span>
+      <span class="bot-lbl">เยี่ยมร้าน</span>
+    </button>
+    <button class="bot-btn" onclick="gotoPage('cust')">
+      <span class="bot-icon">&#128101;</span>
+      <span class="bot-lbl">ลูกค้า</span>
+    </button>
+  </div>
+
+</div><!-- end page-home -->
+
+<!-- ══ SELL PAGE ══ -->
+<div id="page-sell" style="display:none">
+  <div class="page-hd">
+    <button class="back-btn" onclick="gotoPage('home')">&#8592;</button>
+    <span class="page-title">ขายหน้างาน</span>
+  </div>
+  <div id="sell-loading" class="loading-txt">&#9203; กำลังโหลดข้อมูลสินค้า...</div>
+  <div id="sell-content" style="display:none">
+    <div class="p12 mb10">
+      <select id="sell-cust" onchange="renderCart()" class="field-select">
+        <option value="0" data-group="0">ลูกค้าทั่วไป</option>
+      </select>
+    </div>
+    <div id="prod-list"></div>
+    <div class="cart-spacer"></div>
+  </div>
+  <!-- Cart bar -->
+  <div id="cart-bar" style="display:none" class="cart-bar">
+    <div class="cart-top" onclick="toggleCartDetail()">
+      <span class="cart-badge" id="cart-count">0</span>
+      <span class="cart-lbl">รายการ</span>
+      <span class="cart-sub" id="cart-sub-lbl"></span>
+      <span class="cart-total" id="cart-total">0 &#3647;</span>
+    </div>
+    <div id="cart-detail" class="cart-detail"></div>
+    <div id="free-box" style="display:none" class="promo-box promo-green">
+      <div class="promo-hd">&#127873; ของแถม</div>
+      <div id="free-list"></div>
+    </div>
+    <div id="disc-box" style="display:none" class="promo-box promo-blue">
+      <div class="promo-hd">&#127991; ส่วนลด</div>
+      <div id="disc-list"></div>
+    </div>
+    <div class="cart-foot">
+      <select id="pay-type" class="field-select-sm">
+        <option value="cash">&#128181; เงินสด</option>
+        <option value="credit">&#128203; เครดิต</option>
+        <option value="transfer">&#128241; โอน</option>
+      </select>
+      <button id="checkout-btn" class="btn-green btn-sm" onclick="submitSale()">&#9989; บันทึกการขาย</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STOCK PAGE ══ -->
+<div id="page-stock" style="display:none">
+  <div class="page-hd">
+    <button class="back-btn" onclick="gotoPage('home')">&#8592;</button>
+    <span class="page-title">จัดการสต็อก</span>
+  </div>
+  <div id="stock-loading" class="loading-txt">&#9203; กำลังโหลดข้อมูล...</div>
+  <div id="stock-content" style="display:none">
+    <div class="tab-row">
+      <button id="tab-restock" class="tab-btn tab-active" onclick="setStockTab(0)">เบิกขึ้นรถ</button>
+      <button id="tab-count"   class="tab-btn tab-inactive" onclick="setStockTab(1)">ตรวจนับ</button>
+    </div>
+    <div id="restock-wrap">
+      <div class="section-card"><div id="restock-list"></div></div>
+      <div class="p12 mt8"><button id="restock-btn" class="btn-primary" style="display:none" onclick="submitRestock()">ยืนยันเบิกของขึ้นรถ</button></div>
+    </div>
+    <div id="count-wrap" style="display:none">
+      <div class="section-card"><div id="count-list"></div></div>
+      <div class="p12 mt8"><button id="count-btn" class="btn-primary" style="display:none" onclick="submitCount()">ยืนยันตรวจนับ</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VISIT PAGE ══ -->
+<div id="page-visit" style="display:none">
+  <div class="page-hd">
+    <button class="back-btn" onclick="gotoPage('home')">&#8592;</button>
+    <span class="page-title">เยี่ยมร้านค้า</span>
+  </div>
+  <div id="visit-loading" class="loading-txt">&#9203; กำลังโหลดข้อมูล...</div>
+  <div id="visit-content" style="display:none">
+    <div class="space-y">
+      <select id="visit-cust" class="field-select"><option value="0">เลือกร้านค้า...</option></select>
+      <button class="btn-primary" onclick="doCheckIn()">&#128205; เช็คอินเยี่ยมร้าน</button>
+    </div>
+    <div id="active-visit" style="display:none" class="active-visit-box">
+      <div class="active-visit-hd" id="active-visit-hd">&#10003; เช็คอินแล้ว</div>
+      <div class="space-y">
+        <div>
+          <label class="field-lbl">&#128172; บันทึกการเยี่ยมร้าน</label>
+          <textarea id="visit-note" class="field-textarea" placeholder="ความคิดเห็น..."></textarea>
+          <button class="btn-ghost btn-sm mt8" onclick="submitNote()">บันทึก</button>
+        </div>
+        <div class="divider"></div>
+        <div>
+          <label class="field-lbl">&#128269; สำรวจสินค้าคู่แข่ง</label>
+          <input id="comp-brand" class="field-input mb6" placeholder="ยี่ห้อคู่แข่ง"/>
+          <input id="comp-prod"  class="field-input mb6" placeholder="ชื่อสินค้า"/>
+          <div class="row-gap">
+            <input id="comp-price" type="number" class="field-input" placeholder="ราคา" style="flex:1"/>
+            <button class="btn-red btn-sm" onclick="submitComp()">บันทึก</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CUSTOMER PAGE ══ -->
+<div id="page-cust" style="display:none">
+  <div class="page-hd">
+    <button class="back-btn" onclick="gotoPage('home')">&#8592;</button>
+    <span class="page-title">ลูกค้า</span>
+    <button class="btn-primary btn-sm" onclick="openAddCust()">+ เพิ่ม</button>
+  </div>
+  <div id="cust-loading" class="loading-txt">&#9203; กำลังโหลดข้อมูล...</div>
+  <div id="cust-content" style="display:none">
+    <div class="section-card"><div id="cust-list"></div></div>
+  </div>
+</div>
+
+<!-- ══ REPORT PAGE ══ -->
+<div id="page-report" style="display:none">
+  <div class="page-hd">
+    <button class="back-btn" onclick="gotoPage('home')">&#8592;</button>
+    <span class="page-title">รายงาน</span>
+  </div>
+  <div class="loading-txt">&#128274; เร็วๆ นี้</div>
+</div>
+
+<!-- ══ HISTORY PAGE ══ -->
+<div id="page-history" style="display:none">
+  <div class="page-hd">
+    <button class="back-btn" onclick="gotoPage('home')">&#8592;</button>
+    <span class="page-title">ประวัติบิล</span>
+  </div>
+  <div id="history-loading" class="loading-txt">&#9203; กำลังโหลด...</div>
+  <div id="history-list" style="display:none" class="section-card"></div>
+</div>
+
+<!-- Modal: เพิ่มลูกค้า -->
+<div id="modal-cust" class="modal-wrap" onclick="if(event.target===this)closeModal()">
+  <div class="modal-body">
+    <div class="modal-title">&#128101; เพิ่มลูกค้าใหม่</div>
+    <label class="field-lbl">ชื่อลูกค้า *</label>
+    <input id="c-name"  class="field-input mb6" placeholder="ชื่อร้าน / ชื่อลูกค้า"/>
+    <label class="field-lbl">เบอร์โทร</label>
+    <input id="c-phone" class="field-input mb6" placeholder="08x-xxx-xxxx"/>
+    <label class="field-lbl">เลขผู้เสียภาษี</label>
+    <input id="c-tax"   class="field-input mb6" placeholder="สำหรับออกใบกำกับ"/>
+    <label class="field-lbl">ที่อยู่</label>
+    <input id="c-addr"  class="field-input mb6" placeholder="ที่อยู่ร้าน"/>
+    <div class="row-gap mb10">
+      <button class="btn-ghost btn-sm" onclick="capGps()">&#128205; จับพิกัด</button>
+      <span class="gps-lbl" id="gps-lbl">ยังไม่จับพิกัด</span>
+    </div>
+    <button class="btn-green mb6" onclick="submitCust()">บันทึกลูกค้า</button>
+    <button class="btn-ghost" onclick="closeModal()">ยกเลิก</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<script>
+var LINE_UID     = "<?= lineUid ?>";
+var DISPLAY_NAME = "<?= displayName ?>";
+var USER_STATUS  = <?= JSON.stringify(userStatus) ?>;
+
+var products = [], customers = [], rules = [];
+var cart = {}, freeGoods = [], appliedRules = [];
+var restockQty = {}, countQty = {};
+var custGps = {lat:"",lng:""};
+var activeVisitId = 0;
+var dataLoaded = false;
+var _toastTimer = null;
+var currentPage = "home";
+
+function $(id){return document.getElementById(id);}
+function baht(n){return Number(n||0).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:2});}
+
+function toast(msg,type){
+  var el=$("toast");
+  var bg={green:"#0B7B52",red:"#C81E1E",amber:"#B45309",dark:"#0F172A"}[type]||"#0F172A";
+  el.style.background=bg; el.textContent=msg; el.classList.add("show");
+  clearTimeout(_toastTimer); _toastTimer=setTimeout(function(){el.classList.remove("show");},2800);
+}
+
+function openModal(){$("modal-cust").style.display="flex";}
+function closeModal(){$("modal-cust").style.display="none";}
+function openAddCust(){openModal();}
+
+function getGPS(){
+  return new Promise(function(resolve){
+    if(!navigator.geolocation){resolve({lat:"",lng:"",map:""});return;}
+    navigator.geolocation.getCurrentPosition(
+      function(p){resolve({lat:p.coords.latitude,lng:p.coords.longitude,map:"https://maps.google.com/?q="+p.coords.latitude+","+p.coords.longitude});},
+      function(){resolve({lat:"",lng:"",map:""}); },
+      {enableHighAccuracy:true,timeout:8000,maximumAge:0}
+    );
+  });
+}
+
+function callGAS(action,payload,onSuccess,onFail){
+  google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(onFail||function(e){toast("ผิดพลาด: "+(e.message||e),"red");})
+    .handleAction(action,LINE_UID,USER_STATUS.schema||"",payload||{});
+}
+
+// ── INIT ──
+window.onload = function(){
+  $("hdr-name").textContent   = USER_STATUS.exists ? USER_STATUS.name : DISPLAY_NAME;
+  $("hdr-schema").textContent = USER_STATUS.schema || "-";
+  $("sum-role").textContent   = (USER_STATUS.role||"user").toUpperCase();
+  var init = (USER_STATUS.name||DISPLAY_NAME||"S").charAt(0).toUpperCase();
+  $("hdr-initial").textContent = init;
+  loadDashboard();
+};
+
+function confirmLogout(){
+  if(confirm("ออกจากระบบ?")){
+    window.top.location.href = "<?= logoutUrl ?>";
+  }
+}
+
+// ── NAVIGATION ──
+var pages = ["home","sell","stock","visit","cust","report","history"];
+
+function gotoPage(name){
+  pages.forEach(function(p){ var el=$("page-"+p); if(el) el.style.display="none"; });
+  var t=$("page-"+name); if(t) t.style.display="block";
+  currentPage = name;
+  updateBotNav(name);
+  window.scrollTo(0,0);
+  if(name==="sell")    loadSell();
+  if(name==="stock")   loadStock();
+  if(name==="visit")   loadVisit();
+  if(name==="cust")    loadCust();
+  if(name==="history") loadHistory();
+}
+
+function updateBotNav(name){
+  document.querySelectorAll(".bot-btn").forEach(function(b){
+    b.classList.toggle("bot-active", b.getAttribute("data-page")===name);
+  });
+}
+
+// ── DASHBOARD ──
+function loadDashboard(){
+  callGAS("getDashboard",{},function(r){
+    if(!r||!r.success)return;
+    $("sum-bills").textContent  = r.bills||0;
+    $("sum-rev").textContent    = baht(r.revenue);
+    $("sum-visits").textContent = r.visits||0;
+    if(r.topProducts&&r.topProducts.length){
+      var html="";
+      for(var i=0;i<r.topProducts.length;i++){
+        var t=r.topProducts[i];
+        html+="<div class=\"top-row\"><span>"+(i+1)+". "+t.name+"</span><span class=\"top-qty\">"+t.sold+" ชิ้น</span></div>";
+      }
+      $("home-top").innerHTML=html;
+    }else{$("home-top").innerHTML="<div class=\"empty-txt\">ยังไม่มียอดขายวันนี้</div>";}
+  });
+}
+
+// ── LAZY LOAD ──
+function loadSell(){
+  if(dataLoaded){$("sell-loading").style.display="none";$("sell-content").style.display="block";renderProducts();renderCustDropdown();return;}
+  $("sell-loading").style.display="block"; $("sell-content").style.display="none";
+  callGAS("getBootstrap",{},function(r){
+    $("sell-loading").style.display="none";
+    if(!r||!r.success){toast("โหลดข้อมูลไม่ได้","red");return;}
+    products=r.products||[]; customers=r.customers||[]; rules=r.rules||[]; dataLoaded=true;
+    $("sell-content").style.display="block"; renderProducts(); renderCustDropdown();
+  });
+}
+
+function loadStock(){
+  if(dataLoaded){$("stock-loading").style.display="none";$("stock-content").style.display="block";renderRestock();renderCount();return;}
+  $("stock-loading").style.display="block"; $("stock-content").style.display="none";
+  callGAS("getBootstrap",{},function(r){
+    $("stock-loading").style.display="none";
+    if(!r||!r.success){toast("โหลดข้อมูลไม่ได้","red");return;}
+    products=r.products||[]; customers=r.customers||[]; rules=r.rules||[]; dataLoaded=true;
+    $("stock-content").style.display="block"; renderRestock(); renderCount();
+  });
+}
+
+function loadVisit(){
+  if(dataLoaded){$("visit-loading").style.display="none";$("visit-content").style.display="block";renderVisitDropdown();return;}
+  $("visit-loading").style.display="block"; $("visit-content").style.display="none";
+  callGAS("getBootstrap",{},function(r){
+    $("visit-loading").style.display="none";
+    if(!r||!r.success){toast("โหลดข้อมูลไม่ได้","red");return;}
+    products=r.products||[]; customers=r.customers||[]; rules=r.rules||[]; dataLoaded=true;
+    $("visit-content").style.display="block"; renderVisitDropdown();
+  });
+}
+
+function loadCust(){
+  if(dataLoaded){$("cust-loading").style.display="none";$("cust-content").style.display="block";renderCustList();return;}
+  $("cust-loading").style.display="block"; $("cust-content").style.display="none";
+  callGAS("getBootstrap",{},function(r){
+    $("cust-loading").style.display="none";
+    if(!r||!r.success){toast("โหลดข้อมูลไม่ได้","red");return;}
+    products=r.products||[]; customers=r.customers||[]; rules=r.rules||[]; dataLoaded=true;
+    $("cust-content").style.display="block"; renderCustList();
+  });
+}
+
+function loadHistory(){
+  $("history-loading").style.display="block"; $("history-list").style.display="none";
+  callGAS("getRecentSales",{limit:20},function(r){
+    $("history-loading").style.display="none";
+    if(!r||!r.success){toast("โหลดข้อมูลไม่ได้","red");return;}
+    var list=$("history-list");
+    if(!r.data||!r.data.length){list.innerHTML="<div class=\"empty-txt\">ยังไม่มีบิล</div>";list.style.display="block";return;}
+    var html="";
+    for(var i=0;i<r.data.length;i++){
+      var s=r.data[i];
+      var payIcon=s.payment==="cash"?"&#128181;":s.payment==="credit"?"&#128203;":"&#128241;";
+      html+="<div class=\"hist-row\"><div><div class=\"hist-code\">"+s.code+"</div><div class=\"hist-meta\">"+s.customer+" "+payIcon+" "+s.time+"</div></div><div class=\"hist-total\">"+baht(s.total)+" &#3647;</div></div>";
+    }
+    list.innerHTML=html; list.style.display="block";
+  });
+}
+
+// ── DISCOUNT ENGINE ──
+function runDiscounts(){
+  var sel=$("sell-cust");
+  var cgid=parseInt(sel.options[sel.selectedIndex].getAttribute("data-group")||"0");
+  var items=[]; var ids=Object.keys(cart);
+  for(var k=0;k<ids.length;k++){var c=cart[ids[k]];items.push({productId:c.id,qty:c.qty,price:c.price,groupId:c.groupId});}
+  var sub=0; for(var i=0;i<items.length;i++) sub+=items[i].price*items[i].qty;
+  freeGoods=[]; appliedRules=[]; var disc=0,best=null;
+  for(var ri=0;ri<rules.length;ri++){
+    var r=rules[ri];
+    if(r.customerGroupId!==0&&r.customerGroupId!==cgid)continue;
+    var mi=[],mq=0,ma=0;
+    for(var ii=0;ii<items.length;ii++){var it=items[ii];if((r.productId===0||it.productId===r.productId)&&(r.productGroupId===0||it.groupId===r.productGroupId)){mi.push(it);mq+=it.qty;ma+=it.price*it.qty;}}
+    if(r.minQty>0&&mq<r.minQty)continue;
+    if(r.minAmount>0&&sub<r.minAmount)continue;
+    if(!r.minQty&&!r.minAmount&&!r.productId&&!r.productGroupId&&!r.customerGroupId)continue;
+    if(r.discountType==="free_goods"){var times=Math.floor(mq/(r.minQty||1));if(times>0&&r.freeProductId>0)freeGoods.push({ruleId:r.id,ruleName:r.name,productId:r.freeProductId,qty:times*r.freeQty,applied:true});continue;}
+    var dv=r.discountType==="percent"?(ma*r.discountValue/100):r.discountValue;if(dv<=0)continue;
+    if(r.stackable){disc+=dv;appliedRules.push({ruleId:r.id,ruleName:r.name,type:r.discountType,value:dv});}
+    else if(!best||dv>best.value)best={ruleId:r.id,ruleName:r.name,type:r.discountType,value:dv};
+  }
+  if(best){disc+=best.value;appliedRules.push(best);}
+  return{subtotal:sub,disc:disc,total:sub-disc};
+}
+
+// ── SELL ──
+function renderProducts(){
+  var box=$("prod-list");
+  if(!products.length){box.innerHTML="<div class=\"empty-txt\">ยังไม่มีสินค้า</div>";return;}
+  var html="";
+  for(var i=0;i<products.length;i++){
+    var p=products[i]; var q=cart[p.id]?cart[p.id].qty:0;
+    var sc=p.vanStock<3?"stock-low":"stock-ok";
+    html+="<div class=\"prod-row\">";
+    html+="<div class=\"prod-info\"><div class=\"prod-name\">"+p.name+"</div>";
+    html+="<div class=\"prod-meta\">"+baht(p.price)+" &#3647;/"+p.unit+" &nbsp;&#9642;&nbsp; รถ <span class=\""+sc+"\">"+p.vanStock+"</span></div></div>";
+    html+="<div class=\"qty-ctrl\">";
+    html+="<button class=\"qty-minus\" onclick=\"changeCart('"+p.id+"',-1)\">&#8722;</button>";
+    html+="<span class=\"qty-val\" id=\"qv-"+p.id+"\">"+(q||"")+"</span>";
+    html+="<button class=\"qty-plus\" onclick=\"changeCart('"+p.id+"',1)\">&#43;</button>";
+    html+="</div></div>";
+  }
+  box.innerHTML=html;
+}
+
+function renderCustDropdown(){
+  var html="<option value=\"0\" data-group=\"0\">ลูกค้าทั่วไป</option>";
+  for(var i=0;i<customers.length;i++){var c=customers[i];html+="<option value=\""+c.id+"\" data-group=\""+(c.groupId||0)+"\">"+c.name+"</option>";}
+  $("sell-cust").innerHTML=html;
+}
+
+function changeCart(id,delta){
+  var p=null; for(var i=0;i<products.length;i++){if(products[i].id==id){p=products[i];break;}}
+  if(!p)return;
+  var cur=cart[id]?cart[id].qty:0; var next=Math.max(0,cur+delta);
+  if(next>p.vanStock){toast("สต็อกบนรถมีแค่ "+p.vanStock+" "+p.unit,"amber");next=p.vanStock;}
+  if(next===0)delete cart[id]; else cart[id]={id:id,qty:next,price:p.price,name:p.name,groupId:p.groupId||0};
+  var el=$("qv-"+id); if(el) el.textContent=next||"";
+  renderCart();
+}
+
+function toggleCartDetail(){var el=$("cart-detail");el.style.display=el.style.display==="none"?"block":"none";}
+
+function renderCart(){
+  var ids=Object.keys(cart); var bar=$("cart-bar");
+  if(!ids.length){bar.style.display="none";return;}
+  bar.style.display="block";
+  var calc=runDiscounts();
+  var html=""; for(var i=0;i<ids.length;i++){var c=cart[ids[i]];html+="<div class=\"cart-row\"><span>"+c.name+" x"+c.qty+"</span><span>"+baht(c.price*c.qty)+" &#3647;</span></div>";}
+  $("cart-detail").innerHTML=html;
+  $("cart-count").textContent=ids.length;
+  $("cart-sub-lbl").textContent=calc.disc>0?baht(calc.subtotal)+" &#3647;":"";
+  $("cart-total").textContent=baht(calc.total)+" &#3647;";
+  if(freeGoods.length){
+    $("free-box").style.display="block";
+    var fh=""; for(var fi=0;fi<freeGoods.length;fi++){var f=freeGoods[fi];var prd=null;for(var pi=0;pi<products.length;pi++){if(products[pi].id===f.productId){prd=products[pi];break;}}var pn=prd?prd.name:"#"+f.productId;var st=f.applied?"":"text-decoration:line-through;opacity:.5";fh+="<label class=\"free-row\"><input type=\"checkbox\" "+(f.applied?"checked":"")+" onchange=\"toggleFree("+fi+",this.checked)\" style=\"margin-right:6px\"/><span style=\""+st+"\">"+pn+" x"+f.qty+" ("+f.ruleName+")</span></label>";}
+    $("free-list").innerHTML=fh;
+  }else{$("free-box").style.display="none";}
+  if(appliedRules.length){
+    $("disc-box").style.display="block";
+    var dh=""; for(var di=0;di<appliedRules.length;di++){var dr=appliedRules[di];dh+="<div class=\"disc-row\"><span>"+dr.ruleName+"</span><span>-"+baht(dr.value)+" &#3647;</span></div>";}
+    $("disc-list").innerHTML=dh;
+  }else{$("disc-box").style.display="none";}
+}
+
+function toggleFree(i,v){freeGoods[i].applied=v;renderCart();}
+
+function submitSale(){
+  var ids=Object.keys(cart); if(!ids.length){toast("ยังไม่มีสินค้าในตะกร้า","amber");return;}
+  var btn=$("checkout-btn"); btn.disabled=true; btn.textContent="กำลังบันทึก...";
+  var calc=runDiscounts();
+  var items=[]; for(var k=0;k<ids.length;k++){var c=cart[ids[k]];items.push({productId:c.id,qty:c.qty,price:c.price});}
+  var sel=$("sell-cust");
+  var sale={customerId:parseInt(sel.value)||0,items:items,freeGoods:freeGoods.filter(function(f){return f.applied!==false;}),appliedRules:appliedRules,discountTotal:calc.disc,paymentType:$("pay-type").value,_savedAt:new Date().toISOString()};
+  getGPS().then(function(gps){
+    sale.latitude=gps.lat; sale.longitude=gps.lng; sale.googleMap=gps.map;
+    callGAS("recordSale",sale,function(r){
+      btn.disabled=false; btn.textContent="&#9989; บันทึกการขาย";
+      if(r&&r.success){toast("บิล "+r.orderCode+" "+baht(r.total)+" &#3647;","green");cart={};freeGoods=[];appliedRules=[];renderProducts();renderCart();}
+      else toast((r&&r.message)||"บันทึกไม่สำเร็จ","red");
+    });
+  });
+}
+
+// ── STOCK ──
+function setStockTab(t){
+  $("restock-wrap").style.display=t===0?"block":"none";
+  $("count-wrap").style.display=t===1?"block":"none";
+  $("tab-restock").className="tab-btn "+(t===0?"tab-active":"tab-inactive");
+  $("tab-count").className="tab-btn "+(t===1?"tab-active":"tab-inactive");
+}
+
+function renderRestock(){
+  if(!products.length){$("restock-list").innerHTML="<div class=\"empty-txt\">ยังไม่มีสินค้า</div>";return;}
+  var html="";
+  for(var i=0;i<products.length;i++){
+    var p=products[i]; var sc=p.vanStock<3?"stock-low":"stock-ok";
+    html+="<div class=\"prod-row\"><div class=\"prod-info\"><div class=\"prod-name\">"+p.name+"</div><div class=\"prod-meta\">คลัง "+p.warehouse+" &nbsp;&#9642;&nbsp; รถ <span class=\""+sc+"\">"+p.vanStock+"</span></div></div>";
+    html+="<input type=\"number\" min=\"0\" inputmode=\"numeric\" placeholder=\"0\" class=\"qty-input\" value=\""+(restockQty[p.id]||"")+"\" onchange=\"setRestock('"+p.id+"',this.value)\"/></div>";
+  }
+  $("restock-list").innerHTML=html;
+}
+
+function setRestock(id,v){var q=parseInt(v)||0;if(q<=0)delete restockQty[id];else restockQty[id]=q;$("restock-btn").style.display=Object.keys(restockQty).length?"block":"none";}
+
+function submitRestock(){
+  var ids=Object.keys(restockQty); if(!ids.length)return;
+  var btn=$("restock-btn"); btn.disabled=true; btn.textContent="กำลังเบิก...";
+  var items=ids.map(function(id){return{productId:id,qty:restockQty[id]};});
+  callGAS("restockVan",{items:items},function(r){
+    btn.disabled=false; btn.textContent="ยืนยันเบิกของขึ้นรถ";
+    if(r&&r.success){toast("เบิกของขึ้นรถสำเร็จ","green");restockQty={};dataLoaded=false;loadStock();}
+    else toast((r&&r.message)||"เบิกไม่สำเร็จ","red");
+  });
+}
+
+function renderCount(){
+  if(!products.length){$("count-list").innerHTML="<div class=\"empty-txt\">ยังไม่มีสินค้า</div>";return;}
+  var html="";
+  for(var i=0;i<products.length;i++){
+    var p=products[i];
+    html+="<div class=\"prod-row\"><div class=\"prod-info\"><div class=\"prod-name\">"+p.name+"</div><div class=\"prod-meta\">ในระบบ: <b>"+p.vanStock+"</b></div></div>";
+    html+="<input type=\"number\" min=\"0\" inputmode=\"numeric\" placeholder=\"นับได้\" class=\"qty-input-lg\" value=\""+(countQty[p.id]!==undefined?countQty[p.id]:"")+"\" onchange=\"setCount('"+p.id+"',this.value)\"/></div>";
+  }
+  $("count-list").innerHTML=html;
+}
+
+function setCount(id,v){var q=parseInt(v);if(isNaN(q))delete countQty[id];else countQty[id]=q;$("count-btn").style.display=Object.keys(countQty).length?"block":"none";}
+
+function submitCount(){
+  var ids=Object.keys(countQty); if(!ids.length)return;
+  var btn=$("count-btn"); btn.disabled=true; btn.textContent="กำลังบันทึก...";
+  var items=ids.map(function(id){return{productId:id,countedQty:countQty[id]};});
+  callGAS("submitCount",{items:items},function(r){
+    btn.disabled=false; btn.textContent="ยืนยันตรวจนับ";
+    if(r&&r.success){toast("บันทึกการตรวจนับสำเร็จ","green");countQty={};}
+    else toast((r&&r.message)||"บันทึกไม่สำเร็จ","red");
+  });
+}
+
+// ── VISIT ──
+function renderVisitDropdown(){
+  var html="<option value=\"0\">เลือกร้านค้า...</option>";
+  for(var i=0;i<customers.length;i++){html+="<option value=\""+customers[i].id+"\">"+customers[i].name+"</option>";}
+  $("visit-cust").innerHTML=html;
+}
+
+function doCheckIn(){
+  var sel=$("visit-cust"); var cid=parseInt(sel.value)||0;
+  if(!cid){toast("กรุณาเลือกร้านค้าก่อน","amber");return;}
+  getGPS().then(function(gps){
+    callGAS("checkInVisit",{customerId:cid,lat:gps.lat,lng:gps.lng},function(r){
+      if(r&&r.success){
+        activeVisitId=r.visitId;
+        var cn="ร้านค้า"; for(var i=0;i<customers.length;i++){if(customers[i].id===cid){cn=customers[i].name;break;}}
+        $("active-visit-hd").textContent="&#10003; เช็คอินแล้ว: "+cn;
+        $("active-visit").style.display="block"; toast("เช็คอินสำเร็จ","green");
+      }else toast((r&&r.message)||"เช็คอินไม่สำเร็จ","red");
+    });
+  });
+}
+
+function submitNote(){
+  var note=$("visit-note").value.trim(); if(!note){toast("กรุณากรอกความคิดเห็น","amber");return;}
+  callGAS("addVisitNote",{visitId:activeVisitId,note:note},function(r){if(r&&r.success){toast("บันทึกแล้ว","green");$("visit-note").value="";}else toast((r&&r.message)||"บันทึกไม่สำเร็จ","red");});
+}
+
+function submitComp(){
+  var brand=$("comp-brand").value.trim(); if(!brand){toast("กรุณากรอกยี่ห้อคู่แข่ง","amber");return;}
+  var sel=$("visit-cust");
+  callGAS("addCompetitor",{visitId:activeVisitId,customerId:parseInt(sel.value)||0,competitorName:brand,productName:$("comp-prod").value,price:parseFloat($("comp-price").value)||0},function(r){
+    if(r&&r.success){toast("บันทึกแล้ว","green");$("comp-brand").value="";$("comp-prod").value="";$("comp-price").value="";}
+    else toast((r&&r.message)||"บันทึกไม่สำเร็จ","red");
+  });
+}
+
+// ── CUSTOMER ──
+function renderCustList(){
+  var box=$("cust-list");
+  if(!customers.length){box.innerHTML="<div class=\"empty-txt\">ยังไม่มีลูกค้า</div>";return;}
+  var html="";
+  for(var i=0;i<customers.length;i++){
+    var c=customers[i];
+    var ml=(c.lat&&c.lat!=0)?"<a class=\"map-chip\" href=\"https://maps.google.com/?q="+c.lat+","+c.lng+"\" target=\"_blank\">&#128205; แผนที่</a>":"";
+    html+="<div class=\"cust-row\"><div><div class=\"cust-name\">"+c.name+"</div><div class=\"cust-meta\">"+(c.phone||"-")+" &middot; "+(c.address||"-")+"</div></div>"+ml+"</div>";
+  }
+  box.innerHTML=html;
+}
+
+function capGps(){
+  $("gps-lbl").textContent="กำลังจับพิกัด...";
+  getGPS().then(function(g){if(g.lat){custGps=g;$("gps-lbl").textContent=g.lat.toFixed(4)+", "+g.lng.toFixed(4);}else $("gps-lbl").textContent="จับไม่ได้";});
+}
+
+function submitCust(){
+  var name=$("c-name").value.trim(); if(!name){toast("กรุณาระบุชื่อลูกค้า","amber");return;}
+  callGAS("addCustomer",{name:name,phone:$("c-phone").value,taxId:$("c-tax").value,address:$("c-addr").value,lat:custGps.lat,lng:custGps.lng},function(r){
+    if(r&&r.success){toast("เพิ่มลูกค้าแล้ว","green");$("c-name").value="";$("c-phone").value="";$("c-tax").value="";$("c-addr").value="";custGps={lat:"",lng:""};$("gps-lbl").textContent="ยังไม่จับพิกัด";closeModal();dataLoaded=false;}
+    else toast((r&&r.message)||"เพิ่มไม่สำเร็จ","red");
+  });
+}
+</script>
+</body>
+</html>
